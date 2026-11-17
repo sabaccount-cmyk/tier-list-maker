@@ -571,6 +571,7 @@ body.mobile #autosaved{flex:1 1 0!important;min-width:0;white-space:normal;line-
           <button id="tplSave">ランクの型を保存</button>
           <button id="setSave">設定を保存</button>
           <button id="tagSaveMenu">タグの辞書を保存</button>
+          <button id="imgSaveAll">表内の画像を保存</button>
           <hr class="ddline mobonly">
           <div class="set-h mobonly">読み込み</div>
           <button id="loadBtn2" class="mobonly">読み込み(保存したファイルを開く)</button>
@@ -2609,7 +2610,7 @@ function totalOf(c) {
 const newTagDict = () => ({ prio: [[], [], [], [], []], off: [], seq: {}, n: 0 });   // off:候補に出さないタグ(小文字)
 function validTagDict(o) {
   const d = newTagDict(); if (!o || typeof o !== "object") return d;
-  const seen = new Set(), ok = t => { t = String(t).trim().slice(0, 20); const k = t.toLowerCase(); if (!t || seen.has(k)) return null; seen.add(k); return t; };
+  const seen = new Set(), ok = t => { t = String(t).trim().slice(0, 30); const k = t.toLowerCase(); if (!t || seen.has(k)) return null; seen.add(k); return t; };
   if (Array.isArray(o.prio)) d.prio = o.prio.slice(0, 30).map(a => Array.isArray(a) ? a.slice(0, 2000).map(ok).filter(Boolean) : []);
   if (!d.prio.length) d.prio = [[]];
   const off = new Set(Array.isArray(o.off) ? o.off.map(x => String(x).toLowerCase()) : []);
@@ -2661,7 +2662,7 @@ function cleanCards(cs) {
     if (!c || typeof c.src !== "string") continue;
     const o = { src: c.src, name: String(c.name ?? "") };
     if (typeof c.memo === "string" && c.memo.trim()) o.memo = c.memo.slice(0, 1000);
-    if (Array.isArray(c.tags)) { const t = [...new Set(c.tags.map(x => String(x).trim().slice(0, 20)).filter(Boolean))]; if (t.length) o.tags = t; }
+    if (Array.isArray(c.tags)) { const t = [...new Set(c.tags.map(x => String(x).trim().slice(0, 30)).filter(Boolean))]; if (t.length) o.tags = t; }
     if (c.sc && typeof c.sc === "object") {
       const sc = {};
       for (const gk of ["anime", "game", "none"]) if (c.sc[gk] && typeof c.sc[gk] === "object") {
@@ -3239,7 +3240,7 @@ function renderFilterPanel() {
     <hr class="dd-hr">
     <div class="set-h">タグで絞り込む</div>
     <div class="flt-tags">${filt.tags.map((t, i) => `<span class="tagchip">${esc(t)}<button data-fl="deltag" data-i="${i}" aria-label="タグ「${esc(t)}」を外す">×</button></span>`).join("")}</div>
-    <input id="flt-tagin" type="search" list="taglist-f" maxlength="20" placeholder="タグ名を入力" autocomplete="off" ${filt.noTags ? "disabled" : ""}>
+    <input id="flt-tagin" type="search" list="taglist-f" maxlength="30" placeholder="タグ名を入力" autocomplete="off" ${filt.noTags ? "disabled" : ""}>
     <datalist id="taglist-f">${allTags().map(t => `<option value="${esc(t)}">`).join("")}</datalist>
     <label class="size">条件 <select id="flt-mode"><option value="all" ${sel(filt.mode, "all")}>すべてのタグを含む</option><option value="any" ${sel(filt.mode, "any")}>どれかのタグを含む</option></select></label>
     <label class="size"><span><input type="checkbox" id="flt-has" ${filt.hasTags ? "checked" : ""}> タグが付いている画像だけ</span></label>
@@ -3269,13 +3270,13 @@ fl.addEventListener("change", e => {
   else if (id === "flt-min" || id === "flt-max") filt[id === "flt-min" ? "min" : "max"] = e.target.value.trim() === "" ? null : Math.round(clampN(e.target.value, -1e9, 1e9, 0));
   else if (id === "flt-need") { filt.needScore = e.target.checked; if (filt.needScore) filt.noScore = false; }
   else if (id === "flt-noneed") { filt.noScore = e.target.checked; if (filt.noScore) filt.needScore = false; }
-  else if (id === "flt-tagin") { const t = e.target.value.trim().slice(0, 20); if (t) addFilterTag(t); return; }
+  else if (id === "flt-tagin") { const t = e.target.value.trim().slice(0, 30); if (t) addFilterTag(t); return; }
   else return;
   filterChanged();
 });
 fl.addEventListener("input", e => { if (e.target.id === "flt-name") { filt.name = e.target.value.trim(); applySearch(); } });   // 入力しながらすぐに絞り込む
 fl.addEventListener("keydown", e => {
-  if (e.target.id === "flt-tagin" && e.key === "Enter" && !e.isComposing) { e.preventDefault(); const t = e.target.value.trim().slice(0, 20); if (t) addFilterTag(t); }
+  if (e.target.id === "flt-tagin" && e.key === "Enter" && !e.isComposing) { e.preventDefault(); const t = e.target.value.trim().slice(0, 30); if (t) addFilterTag(t); }
 });
 fl.addEventListener("click", e => {
   const d = e.target.closest('[data-fl="deltag"]');
@@ -3343,12 +3344,12 @@ bulkdlg.addEventListener("click", e => {
   const ids = bulkIds(), g = GENRES[state.genre.type], msg = t => { $("#bk-msg").textContent = t; };
   if (a === "close" || !ids.length) { bulkdlg.close(); return; }
   if (a === "tagadd") {
-    const tags = $("#bk-tagadd").value.split(/[,、]/).map(t => t.trim().slice(0, 20)).filter(Boolean);
+    const tags = $("#bk-tagadd").value.split(/[,、]/).map(t => t.trim().slice(0, 30)).filter(Boolean);
     if (!tags.length) { msg("追加するタグを入力してください"); return; }
     let n = 0;
     ids.forEach(id => {
       const c = state.cards[id], cur = c.tags ? c.tags.slice() : []; let ch = false;
-      tags.forEach(t => { if (cur.length < 30 && !cur.some(x => x.toLowerCase() === t.toLowerCase())) { cur.push(t); ch = true; } });
+      tags.forEach(t => { if (cur.length < 50 && !cur.some(x => x.toLowerCase() === t.toLowerCase())) { cur.push(t); ch = true; } });
       if (ch) { c.tags = cur; n++; }
     });
     touch(); render(); renderBulk(`${n} 枚にタグ「${tags.join("」「")}」を追加しました`); say(`${n}枚にタグ「${tags.join("」「")}」を追加しました`);
@@ -4063,7 +4064,7 @@ function renderLb() {
         <select id="lb-move" aria-label="ランクを移動">${state.tiers.map(t => `<option value="${t.id}" ${t.id === curT ? "selected" : ""}>${esc(t.name)}</option>`).join("")}<option value="pool" ${curT === "pool" ? "selected" : ""}>未配置</option></select>
         <h3>タグ(複数設定できます)</h3>
         <div class="lb-tags">${tags.map((t, i) => `<span class="tagchip"><span class="tagsel" data-tagsel="${esc(t)}">${esc(t)}</span><button data-tagdel="${i}" aria-label="タグ「${esc(t)}」を外す">×</button></span>`).join("")}</div>
-        <input id="lb-tag" type="text" list="taglist" maxlength="20" placeholder="タグを入力" autocomplete="off">
+        <input id="lb-tag" type="text" list="taglist" maxlength="30" placeholder="タグを入力" autocomplete="off">
         <datalist id="taglist">${allTags().map(t => `<option value="${esc(t)}">`).join("")}</datalist>
         <h3>メモ</h3>
         <textarea id="lb-memo" rows="3" maxlength="1000" placeholder="感想や出典などを自由に書けます">${esc(c.memo || "")}</textarea>
@@ -4076,8 +4077,8 @@ function renderLb() {
 function addTags(raw) {
   const c = state.cards[lbIds[lbI]], cur = c.tags ? c.tags.slice() : [];
   const added = [];
-  raw.split(/[,、]/).map(t => t.trim().slice(0, 20)).filter(Boolean).forEach(t => {
-    if (cur.length < 30 && !cur.some(x => x.toLowerCase() === t.toLowerCase())) { cur.push(t); added.push(t); }
+  raw.split(/[,、]/).map(t => t.trim().slice(0, 30)).filter(Boolean).forEach(t => {
+    if (cur.length < 50 && !cur.some(x => x.toLowerCase() === t.toLowerCase())) { cur.push(t); added.push(t); }
   });
   c.tags = cur; touch(); renderLb(); $("#lb-tag")?.focus();
   if (added.length) say(`「${c.name}」のタグ${added.map(t => `「${t}」`).join("")}を追加しました`);
@@ -4602,7 +4603,7 @@ function helpData() {   // 端末(PC・スマホ)に合わせた説明
       ["画像ファイルを選ぶ", `${mob ? "スマホ" : "パソコン"}の中の画像を選んで追加します`],
       ["フォルダから追加", "フォルダを選択して中の画像をまとめて追加します"],
       ["重複している画像を探す", "同じ画像やよく似た画像を探してまとめて削除できます"]]],
-    ["保存・書き出し ▾(9項目)", "表を残したり別の形で書き出したりします", [
+    ["保存・書き出し ▾(10項目)", "表を残したり別の形で書き出したりします", [
       ["表を保存", mob ? "表をファイルとして保存します(スマホではダウンロードとして保存されます)" : "前回選んだファイルに上書き保存します(まだ選んでいなければ保存先を選びます)。Ctrl+S でも保存できます"],
       ["名前を付けて保存", "新しい名前を付けて別のファイルとして保存します" + (mob ? "" : "。Ctrl+Shift+S でも保存できます")],
       ["PNGで保存", "表を1枚のPNG画像として保存します"],
@@ -4610,6 +4611,7 @@ function helpData() {   // 端末(PC・スマホ)に合わせた説明
       ["共有用のHTMLを書き出す…", "このツールがなくても見られる1つのHTMLファイルとして書き出します"],
       ["ランクの型", "「ランクの型を保存」はランク名と色と数を名前を付けて保存します。「ランクの型を読み込む」で別の表にも使えます。ランクの数が減るときは下のランクの画像が未配置に移ります"],
       ["タグの辞書の保存・読み込み", "タグの辞書をメニューからも保存・読み込みできます。読み込みでは「追加」か「上書き」を選びます"],
+      ["表内の画像を保存", "表の画像だけをまとめて保存します(ランクに入っている画像と未配置の画像の両方)。Chrome・Edgeのパソコン版では保存先を選ぶとその中に新しいフォルダが作られて画像が入ります。それ以外ではフォルダを含むZIPファイルが保存されます。画像は名前で保存され同じ名前には番号が付きます"],
       ["設定を保存", "ブラウザに保存されている設定をファイルに保存します。読み込みは「読み込み」の「設定を読み込む」で行います。表のデータは含まれません"],
       ["バージョン(残す・戻す・比べる)…", "今の状態に名前を付けてブラウザの中に残します。あとで戻したり今の表と比べたりできます"]]],
     [mob ? "読み込み" : "読み込み ▾", mob ? "「保存・書き出し」の一番下にあります。「読み込み(保存したファイルを開く)」「ランクの型を読み込む」「設定を読み込む」「タグの辞書を読み込み」から選びます" : "保存したファイルを開きます。「表の読み込み」「ランクの型を読み込む」「設定を読み込む」「タグの辞書を読み込み」から選びます"],
@@ -4795,7 +4797,7 @@ function tdPurge(tags) {   // 辞書から削除して、画像に付いてい�
   for (const c of Object.values(state.cards)) { if (!c.tags) continue; c.tags = c.tags.filter(t => !keys.has(tdKey(t))); if (!c.tags.length) delete c.tags; }
   tags.forEach(tdDelete);
 }
-function tdAdd(list) { const d = TD(); list.map(t => t.trim().slice(0, 20)).filter(Boolean).forEach(t => { if (!tdHas(t)) { d.prio[d.prio.length - 1].push(t); d.seq[tdKey(t)] = d.n++; } }); }   // 追加したタグは、いちばん下の優先順位へ
+function tdAdd(list) { const d = TD(); list.map(t => t.trim().slice(0, 30)).filter(Boolean).forEach(t => { if (!tdHas(t)) { d.prio[d.prio.length - 1].push(t); d.seq[tdKey(t)] = d.n++; } }); }   // 追加したタグは、いちばん下の優先順位へ
 function tdDrop(t, target) {
   const d = TD(), orig = d.prio.flat().find(x => tdKey(x) === tdKey(t)) || t;
   tdDetach(t);
@@ -5164,6 +5166,53 @@ $("#set-file").addEventListener("change", async e => {
 });
 /* 保存容量の表示 */
 setTimeout(refreshStorage, 1500); setInterval(refreshStorage, 20000);
+/* ---------- 表内の画像を保存(新しいフォルダに) ---------- */
+const crcTable = (() => { const t = new Uint32Array(256); for (let n = 0; n < 256; n++) { let c = n; for (let k = 0; k < 8; k++) c = c & 1 ? 0xEDB88320 ^ (c >>> 1) : c >>> 1; t[n] = c >>> 0; } return t; })();
+const crc32 = u => { let c = -1; for (let i = 0; i < u.length; i++) c = crcTable[(c ^ u[i]) & 255] ^ (c >>> 8); return (c ^ -1) >>> 0; };
+function makeZip(files) {   // 圧縮なしのZIP(フォルダ付きの名前で入れる)
+  const enc = new TextEncoder(), parts = [], central = [];
+  const u16 = n => [n & 255, (n >> 8) & 255], u32 = n => [n & 255, (n >> 8) & 255, (n >> 16) & 255, (n >>> 24) & 255];
+  let offset = 0;
+  for (const f of files) {
+    const name = enc.encode(f.name), crc = crc32(f.data), size = f.data.length;
+    const local = new Uint8Array([0x50, 0x4b, 3, 4, ...u16(20), ...u16(0x0800), ...u16(0), ...u16(0), ...u16(0x21), ...u32(crc), ...u32(size), ...u32(size), ...u16(name.length), ...u16(0)]);
+    parts.push(local, name, f.data); central.push({ name, crc, size, offset }); offset += local.length + name.length + size;
+  }
+  const cStart = offset;
+  for (const c of central) {
+    const h = new Uint8Array([0x50, 0x4b, 1, 2, ...u16(20), ...u16(20), ...u16(0x0800), ...u16(0), ...u16(0), ...u16(0x21), ...u32(c.crc), ...u32(c.size), ...u32(c.size), ...u16(c.name.length), ...u16(0), ...u16(0), ...u16(0), ...u16(0), ...u32(0), ...u32(c.offset)]);
+    parts.push(h, c.name); offset += h.length + c.name.length;
+  }
+  parts.push(new Uint8Array([0x50, 0x4b, 5, 6, 0, 0, 0, 0, ...u16(central.length), ...u16(central.length), ...u32(offset - cStart), ...u32(cStart), 0, 0]));
+  return new Blob(parts, { type: "application/zip" });
+}
+const safeName = (t, d) => String(t || "").replace(/[\\/:*?"<>|\u0000-\u001f]/g, "_").replace(/^\.+/, "").trim().slice(0, 60) || d;
+const SAVE_EXT = { "image/jpeg": "jpg", "image/png": "png", "image/webp": "webp", "image/gif": "gif", "image/avif": "avif", "image/bmp": "bmp", "image/svg+xml": "svg" };
+async function saveAllImages() {
+  const ids = [...state.tiers.flatMap(t => t.items), ...state.pool].filter(id => state.cards[id]);
+  if (!ids.length) { say("保存できる画像がありません"); return; }
+  const d = new Date(), p = n => String(n).padStart(2, "0");
+  const folder = `${safeName(state.title, "ティア表")}_画像_${d.getFullYear()}${p(d.getMonth() + 1)}${p(d.getDate())}-${p(d.getHours())}${p(d.getMinutes())}`;
+  let dir = null;
+  if (window.showDirectoryPicker) {   // 保存先を選ぶと、その中に新しいフォルダを作る
+    try { const root = await showDirectoryPicker({ mode: "readwrite" }); dir = await root.getDirectoryHandle(folder, { create: true }); }
+    catch (e) { if (e.name === "AbortError") return; dir = null; }
+  }
+  const used = new Set(), files = [];
+  for (let i = 0; i < ids.length; i++) {
+    say(`画像を保存しています(${i + 1}/${ids.length})`);
+    const c = state.cards[ids[i]], blob = await (await fetch(c.src)).blob();
+    const ext = SAVE_EXT[blob.type] || (blob.type.split("/")[1] || "img").replace(/\+.*/, ""), base = safeName(c.name, "画像");
+    let name = `${base}.${ext}`, n = 2;
+    while (used.has(name.toLowerCase())) name = `${base}(${n++}).${ext}`;   // 同じ名前には番号を付ける
+    used.add(name.toLowerCase());
+    if (dir) { const w = await (await dir.getFileHandle(name, { create: true })).createWritable(); await w.write(blob); await w.close(); }
+    else files.push({ name: `${folder}/${name}`, data: new Uint8Array(await blob.arrayBuffer()) });
+  }
+  if (!dir) { const a = document.createElement("a"); a.href = URL.createObjectURL(makeZip(files)); a.download = folder + ".zip"; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 5000); }
+  say(dir ? `表内の画像${ids.length}枚を、フォルダ「${folder}」に保存しました` : `表内の画像${ids.length}枚を、フォルダ「${folder}」を含むZIPファイルとして保存しました`);
+}
+$("#imgSaveAll").onclick = () => saveAllImages().catch(() => say("画像を保存できませんでした"));
 window.addEventListener("beforeunload", e => {
   if (dirty && Object.keys(state.cards).length) { e.preventDefault(); e.returnValue = ""; }
 });
