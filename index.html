@@ -136,6 +136,7 @@ dialog .cnt-in.fx{border-color:var(--accent)}
 #sq{width:170px;padding:6px 8px;background:var(--bg);color:var(--ink);border:1px solid var(--line);border-radius:6px;font:inherit}
 #poolsort{padding:4px 6px;font-size:13px;background:var(--bg);color:var(--ink);border:1px solid var(--line);border-radius:6px}
 .card.dim{opacity:.25}
+body.fltHide .card.fdim{display:none}
 .card.hit .thumb{outline:3px solid #ffd54a;outline-offset:-3px}
 .restore{display:flex;flex-wrap:wrap;gap:10px;align-items:center;padding:10px 12px;margin-bottom:12px;border:1px solid var(--accent);border-radius:8px;background:var(--panel)}
 .restore[hidden]{display:none}
@@ -244,7 +245,7 @@ body.hascols main{min-width:var(--page)}
 .stat-t th:first-child,.stat-t td:first-child{text-align:left;position:sticky;left:0;background:var(--panel)}
 .stat-t th{color:var(--sub);font-weight:600}
 .flt-tags{display:flex;flex-wrap:wrap}
-#flt-tagin,#flt-name{width:100%;padding:6px 8px;background:var(--bg);color:var(--ink);border:1px solid var(--line);border-radius:6px;font:inherit}
+#flt-tagin,#flt-name,#flt-exin{width:100%;padding:6px 8px;background:var(--bg);color:var(--ink);border:1px solid var(--line);border-radius:6px;font:inherit}
 .dd-menu.panel .tagchip button{border:0;padding:0 5px}
 .dd-menu.panel.wide{width:min(96vw,1240px)}
 .set-cols{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:18px}
@@ -381,6 +382,29 @@ body.mobile .tg-bulk>button{margin-left:auto}
 .tg-bulk{display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end}
 .tg-bf{display:flex;flex-direction:column;gap:4px;font-size:13px;color:var(--sub)}.tg-bf select{padding:6px 8px}
 .tg-pop .size{justify-content:space-between}
+.t-label{position:relative}
+.t-fold{position:absolute;left:2px;top:2px;min-width:22px;height:22px;min-height:0;padding:0;display:inline-flex;align-items:center;justify-content:center;line-height:1;font-size:13px;opacity:.85}
+.tier.collapsed .zone,.tier.collapsed .t-ctl,.tier.collapsed .t-count{display:none}
+body.mobile .tier.collapsed{grid-template-columns:minmax(0,1fr)}
+.tier.collapsed .t-label{min-height:36px;padding-left:30px}
+.t-label textarea{width:100%;background:transparent;border:0;color:inherit;text-align:center;font:800 22px/1.2 var(--font);padding:4px 0;resize:none;overflow:hidden;white-space:pre-wrap;word-break:break-all;box-sizing:border-box;display:block}
+.t-label textarea:focus-visible{outline-color:currentColor}
+body.mobile .t-label textarea{width:auto;flex:1;min-width:0;text-align:left;font-size:20px;resize:none;overflow:hidden;white-space:pre-wrap;word-break:break-all;box-sizing:border-box;display:block}
+#lb:focus{outline:none}
+.to-row{display:flex;align-items:center;gap:10px;padding:6px 0;border-bottom:1px solid var(--line)}
+.to-no{flex:0 0 1.8em;text-align:right;color:var(--sub)}
+.to-name{flex:1;min-width:0;word-break:break-all}
+.to-ops{display:flex;gap:6px;align-items:center}
+.to-ops .colorbtn{width:28px;height:28px}
+.to-grip{cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none;padding:2px 6px;color:var(--sub);font-size:18px}
+.to-nm{flex:1;min-width:0;background:var(--bg);color:var(--ink);border:1px solid var(--line);border-radius:6px;padding:5px 8px;font:inherit}
+.to-name{display:flex;align-items:center;gap:6px}
+.to-chips{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 10px}
+.to-chip{display:inline-flex;align-items:center;gap:6px;background:var(--row);border:1px solid var(--line);border-radius:14px;padding:3px 10px;cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none;font-size:13px;color:var(--ink)}
+.to-cb{box-shadow:-3px 0 0 var(--accent)}.to-ca{box-shadow:3px 0 0 var(--accent)}
+.dn-g{border:1px solid var(--line);border-radius:8px;padding:8px;margin:8px 0}.dn-gh{font-weight:700;margin-bottom:6px;color:var(--ink)}
+.dn-it{display:flex;align-items:center;gap:8px;padding:4px 0;color:var(--ink);font-size:13px}.dn-it img{width:48px;height:48px;object-fit:cover;border-radius:4px;flex:none}.dn-nm{flex:1;min-width:0;word-break:break-all}.dn-pl{color:var(--sub);font-size:12px}
+.to-drag{opacity:.5}.to-ob{box-shadow:0 -3px 0 var(--accent)}.to-oa{box-shadow:0 3px 0 var(--accent)}
 .ddline{border:0;border-top:2px solid var(--accent);margin:4px 2px;width:auto}
 body.mobile .lnsw{border-top-color:var(--line)}
 .mob-b{display:none}body.mobile .pc-b{display:none}body.mobile .mob-b{display:block}
@@ -512,6 +536,7 @@ body.mobile #autosaved{flex:1 1 0!important;min-width:0;white-space:normal;line-
             <div class="set-h">自動保存の設定</div>
             <label class="size"><span><input type="checkbox" id="autoOn" checked> 自動保存をONにする</span></label>
             <label class="size" title="最後に操作してからこの秒数がたつと自動で保存します">保存の間隔 <span><input id="autoSec" type="number" min="0.5" max="600" step="0.5" value="5"> 秒</span></label>
+            <label class="size"><span><input type="checkbox" id="delConfirm" checked> 画像を削除するときに確認を出す</span></label>
           </div>
           <div class="set-col">
             <div class="set-h sh1">表示関連<button type="button" class="set-tgl" aria-label="開く・閉じる">－</button></div>
@@ -527,6 +552,8 @@ body.mobile #autosaved{flex:1 1 0!important;min-width:0;white-space:normal;line-
             <label class="size mobrow"><span><input type="checkbox" id="undoSwapMob"> 「⬅︎」「➡︎」を「元に戻す」「やり直す」に変更</span></label>
             <label class="size"><span><input type="checkbox" id="showCount" checked> ランク名の下の枚数の表示</span></label>
             <label class="size"><span><input type="checkbox" id="arrowSearch"> ⬆︎・⬇︎を検索対象のスクロールに使用</span></label>
+            <label class="size"><span><input type="checkbox" id="lbHitOnly" checked> 画像詳細の「前へ」「次へ」を検索・絞り込みの対象だけにする</span></label>
+            <label class="size"><span><input type="checkbox" id="enterNavOn" checked> Enterで検索対象の次の画像へ移動する(Shift+Enterで前の画像)</span></label>
             <label class="size"><span><input type="checkbox" id="tagFilterOn" checked> 画像詳細のタグを押して絞り込む</span></label>
             <label class="size mobrow"><span><input type="checkbox" id="swipeOn" checked> 画像詳細でスワイプして前後の画像へ移る</span></label>
             <label class="size mobrow"><span><input type="checkbox" id="sbarOn" checked> スクロールバーの表示</span></label>
@@ -555,6 +582,7 @@ body.mobile #autosaved{flex:1 1 0!important;min-width:0;white-space:normal;line-
           <button id="addFolder" title="フォルダの中の画像をまとめて追加します(Chrome・Edgeのパソコン版)">フォルダから追加</button>
           <hr class="ddline">
           <button id="dupBtn" title="同じ画像やよく似た画像を探してまとめて削除できます">重複している画像を探す</button>
+          <button id="dupNameBtn" title="同じ名前やよく似た名前の画像を探します">重複している名前を探す</button>
         </div>
       </div>
       <div class="dd" id="ddSave">
@@ -575,6 +603,7 @@ body.mobile #autosaved{flex:1 1 0!important;min-width:0;white-space:normal;line-
           <hr class="ddline mobonly">
           <div class="set-h mobonly">読み込み</div>
           <button id="loadBtn2" class="mobonly">読み込み(保存したファイルを開く)</button>
+          <button id="loadAddBtn2" class="mobonly">表の読み込み(追加)</button>
           <hr class="ddline lnsw mobonly">
           <button id="tplLoad" class="mobonly">ランクの型を読み込む</button>
           <button id="setImport" class="mobonly">設定を読み込む</button>
@@ -585,6 +614,7 @@ body.mobile #autosaved{flex:1 1 0!important;min-width:0;white-space:normal;line-
         <button class="dd-btn" data-dd="menuLoad" aria-haspopup="true" aria-expanded="false">読み込み ▾</button>
         <div class="dd-menu" id="menuLoad" hidden>
           <button id="loadBtn">表の読み込み</button>
+          <button id="loadAddBtn" title="読み込んだ表の画像を、いまの表の未配置に追加します">表の読み込み(追加)</button>
           <hr class="ddline">
           <button id="tplLoad2">ランクの型を読み込む</button>
           <button id="setImport2">設定を読み込む</button>
@@ -613,7 +643,7 @@ body.mobile #autosaved{flex:1 1 0!important;min-width:0;white-space:normal;line-
       <button class="dd-btn" data-dd="menuFilter" aria-haspopup="true" aria-expanded="false">絞り込み ▾</button>
       <div class="dd-menu panel" id="menuFilter" hidden></div>
     </div>
-    <button id="statBtn" title="ランクごとの枚数・評価点数・タグの内訳を一覧で見ます">集計</button>
+    <button id="statBtn" title="ランクごとの枚数・評価点数・タグの内訳を一覧で見ます">集計</button><button id="tierOpBtn">ティアの操作</button><button id="tagMenuBtn">タグの辞書</button>
     </div>
     <div class="sbar"><input type="search" id="sq" placeholder="名前で検索" aria-label="名前で検索" autocomplete="off"><button id="sqBtn">検索</button><button id="sqClear">検索解除</button><span id="sqn" class="size"></span><button id="selhitBtn" title="検索や絞り込みで一致した画像を選びます">一致画像選択</button></div>
     <div class="hitnav" id="hitnav"><button id="hitPrev" disabled>前の画像</button><button id="hitNext" disabled>次の画像</button></div>
@@ -638,6 +668,10 @@ body.mobile #autosaved{flex:1 1 0!important;min-width:0;white-space:normal;line-
 <dialog id="manualdlg"></dialog>
 <dialog id="docdlg"></dialog>
 <dialog id="scdlg"></dialog>
+<dialog id="tierdlg"></dialog>
+<dialog id="dupnamedlg"></dialog>
+<dialog id="addmodedlg"></dialog>
+<input type="file" id="add-file" accept=".json,application/json,.tierlist" hidden>
 <dialog id="tagdlg"></dialog>
 <input type="file" id="tg-file" accept=".json,application/json" hidden>
 <input type="file" id="set-file" accept=".json,application/json" hidden>
@@ -744,11 +778,11 @@ function cardHtml(id) {
 function render() {
   closePop();
   $("#tiers").innerHTML = state.tiers.map((t, i) => `
-    <div class="tier" data-t="${t.id}" style="--tc:${t.border || t.color}">
-      <div class="t-label" style="background:${t.color};color:${ink(t.color)}">
-        <input type="text" value="${esc(t.name)}" data-act="tname" aria-label="ティア名" spellcheck="false"><div class="t-count">${t.items.length} 枚</div>
+    <div class="tier${t.collapsed ? " collapsed" : ""}" data-t="${t.id}" style="--tc:${t.border || t.color}">
+      <div class="t-label" style="background:${t.color};color:${ink(t.color)}"><button class="t-fold" data-act="tfold" aria-label="折りたたむ・開く" title="折りたたむ・開く">${t.collapsed ? "＋" : "－"}</button>
+        <textarea data-act="tname" rows="1" spellcheck="false" aria-label="ティア名">${esc(t.name)}</textarea><div class="t-count">${t.items.length} 枚</div>
       </div>
-      <div class="zone" data-zone="${t.id}">${t.items.map(cardHtml).join("")}</div>
+      <div class="zone" data-zone="${t.id}">${t.collapsed ? "" : t.items.map(cardHtml).join("")}</div>
       <div class="t-ctl">
         <button class="t-grip" title="ドラッグでランクごと並べ替え" aria-label="ランクを移動">⋮⋮</button>
         <button class="t-color colorbtn" data-act="tcolor" style="background:${t.color}" title="色を変える" aria-label="ティアの色"></button>
@@ -758,7 +792,7 @@ function render() {
       </div>
     </div>`).join("");
   $("#pool").innerHTML = state.pool.map(cardHtml).join("");
-  renderPoolTools(); fitNames(); applySearch(); updateTally(); syncLimitUI();
+  renderPoolTools(); fitNames(); fitTierNames(); applySearch(); updateTally(); syncLimitUI();
 }
 
 /* ---------- 画像の追加 ---------- */
@@ -1034,7 +1068,7 @@ $("#load").onchange = async e => {
     const keepW = tableLock ? state.tableW : null;   // 幅を固定しているときは、そのまま
     state = {
       title: String(d.title || ""),
-      tiers: d.tiers.map(t => ({ id: t.id || uid(), name: String(t.name || ""), color: /^#[0-9a-f]{6}$/i.test(t.color) ? t.color : "#c9c9d6", items: Array.isArray(t.items) ? t.items : [], border: /^#[0-9a-f]{6}$/i.test(t.border) ? t.border : "" })),
+      tiers: d.tiers.map(t => ({ id: t.id || uid(), name: String(t.name || ""), color: /^#[0-9a-f]{6}$/i.test(t.color) ? t.color : "#c9c9d6", items: Array.isArray(t.items) ? t.items : [], border: /^#[0-9a-f]{6}$/i.test(t.border) ? t.border : "", collapsed: !!t.collapsed })),
       pool: d.pool, cards: cleanCards(d.cards),
       labelW: clampN(d.labelW, 60, 400, 120), tableW: clampN(d.tableW, 600, 4800, 1180), cardSize: clampN(d.cardSize, 40, 300, 104),
       borderW: clampN(d.borderW, 0, 12, 3),
@@ -1462,7 +1496,7 @@ function setSelMode(on) { selMode = on; selected.clear(); document.body.classLis
 function deleteIds(ids) {
   ids = ids.filter(id => state.cards[id]);
   if (!ids.length) return;
-  if (!confirm(`${ids.length} 枚の画像を削除します。\n削除した直後なら「元に戻す」で元に戻せます。よろしいですか?`)) return;
+  if (!confirmDel(`${ids.length} 枚の画像を削除します。\n削除した直後なら「元に戻す」で元に戻せます。よろしいですか?`)) return;
   undoDel = { cards: Object.fromEntries(ids.map(id => [id, state.cards[id]])), ids };
   ids.forEach(id => { removeFromAll(id); delete state.cards[id]; selected.delete(id); });
   touch(); render();
@@ -1540,7 +1574,6 @@ document.addEventListener("pointerup", () => {
   const d = selDrag; cancelMarquee();
   if (!d.active) {   // ただのクリック:その画像の選択を切り替える
     if (d.card) { if (!d.skipTap) { if (selected.has(d.card)) selected.delete(d.card); else selected.add(d.card); } }
-    else if (!d.add) selected.clear();
     syncSelClasses();
   }
   if (!selMode && d.active) {
@@ -1561,7 +1594,7 @@ function applyLayout() {
   root.setProperty("--bw", state.borderW + "px");
   root.setProperty("--cols", state.perRow || 0);
   document.body.classList.toggle("hascols", !!state.perRow);
-  $("#size").value = state.cardSize; $("#lw").value = state.labelW; $("#pw").value = state.tableW; $("#bw").value = state.borderW; $("#imgq").value = state.imgMax; syncGenreUI(); fitNames(); syncLimitUI();
+  $("#size").value = state.cardSize; $("#lw").value = state.labelW; $("#pw").value = state.tableW; $("#bw").value = state.borderW; $("#imgq").value = state.imgMax; syncGenreUI(); fitNames(); fitTierNames(); syncLimitUI();
 }
 [["#size", "cardSize", 40, 300, 104], ["#lw", "labelW", 60, 400, 120], ["#pw", "tableW", 600, 4800, 1180], ["#bw", "borderW", 0, 12, 3]].forEach(([sel, key, a, b, d]) =>
   $(sel).addEventListener("change", e => { state[key] = Math.round(clampN(e.target.value, a, b, d)); touch(); applyLayout(); }));
@@ -2365,7 +2398,7 @@ function applySearch() {
     const c = state.cards[el.dataset.id];
     if (!c) return;
     const hit = active && (terms.length === 0 || terms.every(t => norm(c.name + " " + (c.tags || []).join(" ")).includes(t))) && (!fa || filterOk(c));
-    el.classList.toggle("hit", hit); el.classList.toggle("dim", active && !hit);
+    el.classList.toggle("hit", hit); el.classList.toggle("dim", active && !hit); el.classList.toggle("fdim", fa && !hit);
     if (hit) n++;
   });
   $("#sqn").textContent = active ? `${n} 件一致` : "";
@@ -2380,7 +2413,12 @@ function runSearch() {
   applySearch();
 }
 $("#sqBtn").onclick = runSearch;
-$("#sq").addEventListener("keydown", e => { if (e.key === "Enter") runSearch(); });
+$("#sq").addEventListener("keydown", e => {
+  if (e.key !== "Enter" || e.isComposing) return;
+  e.preventDefault();
+  const changed = $("#sq").value !== query;   // 1回目は結果を出す 2回目からは対象の画像へ移動(Shift+Enterで前へ)
+  if (changed || !enterNavOn || enterStamp !== navStamp()) { runSearch(); enterStamp = navStamp(); } else gotoHit(e.shiftKey ? -1 : 1);
+});
 $("#sq").addEventListener("input", e => { if (e.target.value === "" && query !== "") { query = ""; hitIdx = -1; applySearch(); } });   // 空にしたら結果を消す
 var storInfo = "", storTitle = "";
 async function refreshStorage() {   // 保存容量(ブラウザの保存領域の、使っている割合)
@@ -3206,11 +3244,12 @@ revdlg.addEventListener("close", () => {   // 閉じたら下の画面を更新(
 });
 
 /* ---------- 絞り込み(タグ・評価点数) ---------- */
-const filt = { tags: [], mode: "all", noTags: false, hasTags: false, name: "", key: "total", min: null, max: null, needScore: false, noScore: false };
-function filterActive() { return filt.tags.length > 0 || filt.noTags || filt.hasTags || !!filt.name || filt.min !== null || filt.max !== null || filt.needScore || filt.noScore; }
+const filt = { tags: [], mode: "all", noTags: false, hasTags: false, name: "", key: "total", min: null, max: null, needScore: false, noScore: false, exclude: [] };
+function filterActive() { return filt.tags.length > 0 || filt.noTags || filt.hasTags || !!filt.name || filt.min !== null || filt.max !== null || filt.needScore || filt.noScore || filt.exclude.length > 0; }
 function filterOk(c) {
   if (filt.name && !String(c.name || "").toLowerCase().includes(filt.name.toLowerCase())) return false;
   const tg = (c.tags || []).map(t => t.toLowerCase());
+  if (filt.exclude.length) { const ex = filt.exclude.map(t => t.toLowerCase()); if (tg.some(t => ex.includes(t))) return false; }   // 除くタグ
   if (filt.noTags) { if (tg.length) return false; }
   else {
     if (filt.hasTags && !tg.length) return false;
@@ -3243,6 +3282,9 @@ function renderFilterPanel() {
     <input id="flt-tagin" type="search" list="taglist-f" maxlength="30" placeholder="タグ名を入力" autocomplete="off" ${filt.noTags ? "disabled" : ""}>
     <datalist id="taglist-f">${allTags().map(t => `<option value="${esc(t)}">`).join("")}</datalist>
     <label class="size">条件 <select id="flt-mode"><option value="all" ${sel(filt.mode, "all")}>すべてのタグを含む</option><option value="any" ${sel(filt.mode, "any")}>どれかのタグを含む</option></select></label>
+    <div class="set-h" style="margin-top:6px">除くタグ</div>
+    <div class="flt-tags">${filt.exclude.map((t, i) => `<span class="tagchip">${esc(t)}<button data-fl="delex" data-i="${i}" aria-label="除くタグ「${esc(t)}」を外す">×</button></span>`).join("")}</div>
+    <input id="flt-exin" type="search" list="taglist-f" maxlength="30" placeholder="除くタグ名を入力" autocomplete="off">
     <label class="size"><span><input type="checkbox" id="flt-has" ${filt.hasTags ? "checked" : ""}> タグが付いている画像だけ</span></label>
     <label class="size"><span><input type="checkbox" id="flt-none" ${filt.noTags ? "checked" : ""}> タグが付いていない画像だけ</span></label>
     ${keys.length ? `<hr class="dd-hr">
@@ -3252,6 +3294,7 @@ function renderFilterPanel() {
     <label class="size"><span><input type="checkbox" id="flt-need" ${filt.needScore ? "checked" : ""}> 点数が入力されている画像だけ</span></label>
     <label class="size"><span><input type="checkbox" id="flt-noneed" ${filt.noScore ? "checked" : ""}> 点数が入力されていない画像だけ</span></label>` : ""}
     <button id="flt-clear">絞り込みを解除</button>
+    <label class="size"><span><input type="checkbox" id="flt-hide" ${fltHide ? "checked" : ""}> 他の画像を一時的に非表示</span></label>
     <p class="cmp-hint" style="text-align:left;margin:0">条件に合う画像が目立ちほかは薄くなります。名前の検索とも同時に使えます。選択モードでは「一致画像選択」で合う画像をまとめて選べます</p>`;
 }
 function filterChanged() { applySearch(); renderFilterPanel(); }
@@ -3259,6 +3302,11 @@ function addFilterTag(t) {
   filt.noTags = false;
   if (!filt.tags.some(x => x.toLowerCase() === t.toLowerCase())) filt.tags.push(t);
   filterChanged(); $("#flt-tagin")?.focus();
+}
+function addExclude(v) {
+  const t = String(v).trim().slice(0, 30); if (!t) return;
+  if (!filt.exclude.some(x => x.toLowerCase() === t.toLowerCase())) filt.exclude.push(t);
+  filterChanged(); $("#flt-exin")?.focus();
 }
 fl.addEventListener("change", e => {
   const id = e.target.id;
@@ -3270,18 +3318,28 @@ fl.addEventListener("change", e => {
   else if (id === "flt-min" || id === "flt-max") filt[id === "flt-min" ? "min" : "max"] = e.target.value.trim() === "" ? null : Math.round(clampN(e.target.value, -1e9, 1e9, 0));
   else if (id === "flt-need") { filt.needScore = e.target.checked; if (filt.needScore) filt.noScore = false; }
   else if (id === "flt-noneed") { filt.noScore = e.target.checked; if (filt.noScore) filt.needScore = false; }
+  else if (id === "flt-exin") { addExclude(e.target.value); return; }
+  else if (id === "flt-hide") { fltHide = e.target.checked; document.body.classList.toggle("fltHide", fltHide); return; }
   else if (id === "flt-tagin") { const t = e.target.value.trim().slice(0, 30); if (t) addFilterTag(t); return; }
   else return;
   filterChanged();
 });
 fl.addEventListener("input", e => { if (e.target.id === "flt-name") { filt.name = e.target.value.trim(); applySearch(); } });   // 入力しながらすぐに絞り込む
 fl.addEventListener("keydown", e => {
-  if (e.target.id === "flt-tagin" && e.key === "Enter" && !e.isComposing) { e.preventDefault(); const t = e.target.value.trim().slice(0, 30); if (t) addFilterTag(t); }
+  if (e.key !== "Enter" || e.isComposing) return;
+  const id = e.target.id; if (id !== "flt-tagin" && id !== "flt-exin" && id !== "flt-name") return;
+  e.preventDefault();
+  const v = e.target.value.trim();
+  if (id === "flt-tagin" && v) { addFilterTag(v.slice(0, 30)); enterStamp = navStamp(); return; }
+  if (id === "flt-exin" && v) { addExclude(v); enterStamp = navStamp(); return; }
+  if (enterNavOn && enterStamp === navStamp()) gotoHit(e.shiftKey ? -1 : 1); else { if (id === "flt-name") filt.name = v; applySearch(); enterStamp = navStamp(); }
 });
 fl.addEventListener("click", e => {
+  const dx = e.target.closest('[data-fl="delex"]');
+  if (dx) { filt.exclude.splice(+dx.dataset.i, 1); filterChanged(); return; }
   const d = e.target.closest('[data-fl="deltag"]');
   if (d) { filt.tags.splice(+d.dataset.i, 1); filterChanged(); }
-  else if (e.target.id === "flt-clear") { Object.assign(filt, { tags: [], mode: "all", noTags: false, hasTags: false, name: "", key: "total", min: null, max: null, needScore: false, noScore: false }); filterChanged(); }
+  else if (e.target.id === "flt-clear") { Object.assign(filt, { tags: [], mode: "all", noTags: false, hasTags: false, name: "", key: "total", min: null, max: null, needScore: false, noScore: false, exclude: [] }); filterChanged(); }
 });
 
 /* ---------- まとめて編集(選んだ画像のタグ・評価点数・名前) ---------- */
@@ -3662,6 +3720,7 @@ qcdlg.addEventListener("change", e => {
   if (e.target.name === "qcscope") { qcOpt.scope = e.target.value; renderQcSetup(); }
   else if (e.target.name === "qcorder") qcOpt.order = e.target.value;
 });
+qcdlg.addEventListener("keydown", e => { if (e.repeat && !/^Arrow/.test(e.key)) { e.preventDefault(); e.stopImmediatePropagation(); } }, true);   // 矢印キー以外は、押しっぱなしで繰り返さない
 qcdlg.addEventListener("keydown", e => {
   if (!qc || qcdlg.dataset.screen !== "run" || e.ctrlKey || e.metaKey || e.altKey || e.isComposing) return;
   const k = e.key, { map } = qcKeys();
@@ -4045,7 +4104,7 @@ function pruneUrls() {   // 表を読み込み直したあと使わなくなっ�
 /* ---------- 画像の拡大表示 ---------- */
 const lb = $("#lb");
 let lbIds = [], lbI = 0;
-function readingOrder() { return [...state.tiers.flatMap(t => t.items), ...state.pool].filter(id => state.cards[id]); }
+function readingOrder() { return [...state.tiers.filter(t => !t.collapsed).flatMap(t => t.items), ...state.pool].filter(id => state.cards[id]); }
 function whereIs(id) {
   for (const t of state.tiers) { const i = t.items.indexOf(id); if (i >= 0) return `${t.name} の ${i + 1} 番目`; }
   return `未配置の ${state.pool.indexOf(id) + 1} 番目`;
@@ -4057,7 +4116,7 @@ function renderLb() {
     <div class="lb-body">
       <div>
         <img class="lb-img" src="${imgUrl(c)}" alt="">
-        <div class="lb-capbar"><input id="lb-name" class="lb-nm" type="search" value="${esc(c.name)}" maxlength="100" readonly aria-label="画像の名前"><button id="lb-edit" title="画像の名前を変える" aria-label="画像の名前を変える">✎</button></div><p class="lb-sub">${esc(whereIs(id))}</p>
+        <div class="lb-capbar"><input id="lb-name" class="lb-nm" type="search" value="${esc(c.name)}" maxlength="100" aria-label="画像の名前"><button id="lb-edit" title="画像の名前を変える" aria-label="画像の名前を変える">✎</button></div><p class="lb-sub">${esc(whereIs(id))}</p>
       </div>
       <div class="lb-side">
         <h3>ランクを移動</h3>
@@ -4070,6 +4129,7 @@ function renderLb() {
         <textarea id="lb-memo" rows="3" maxlength="1000" placeholder="感想や出典などを自由に書けます">${esc(c.memo || "")}</textarea>
         ${state.rate.lbItems !== false || state.rate.lbTotal !== false ? `<h3>評価点数(${esc(g.label)})</h3>` : ""}
         ${state.rate.lbItems !== false ? rows : ""}${state.rate.lbTotal !== false ? `<div class="lb-total"><span>総合評価</span><b id="lb-total">${totalOf(c) ?? "—"}</b></div>` : ""}${state.rate.lbBtn !== false ? '<button id="lb-score" class="primary" style="margin-top:8px;width:100%">点数項目の設定</button>' : ""}
+        <div style="margin-top:6px"><button id="lb-del" class="danger" style="padding:4px 14px">削除</button></div>
       </div>
     </div>
     <div class="cmp-foot"><button data-lb="prev" ${lbIds.length > 1 ? "" : "disabled"}>← 前へ</button><button data-lb="next" ${lbIds.length > 1 ? "" : "disabled"}>次へ →</button></div>`;
@@ -4084,7 +4144,9 @@ function addTags(raw) {
   if (added.length) say(`「${c.name}」のタグ${added.map(t => `「${t}」`).join("")}を追加しました`);
 }
 function openLightbox(id) {
-  lbIds = readingOrder(); lbI = Math.max(0, lbIds.indexOf(id));
+  lbIds = readingOrder();
+  if (lbHitOnly) { const hs = new Set([...document.querySelectorAll(".card.hit")].map(el => el.dataset.id)); if (hs.has(id)) lbIds = lbIds.filter(x => hs.has(x)); }   // 検索・絞り込みの対象だけ
+  lbI = Math.max(0, lbIds.indexOf(id));
   if (!lbIds.length) return;
   renderLb(); lb.showModal();
 }
@@ -4099,7 +4161,7 @@ lb.addEventListener("click", e => {
   const ts = e.target.closest("[data-tagsel]");
   if (ts && tagFilterOn) {   // タグを押して、そのタグで絞り込む
     const t = ts.dataset.tagsel;
-    Object.assign(filt, { tags: [t], mode: "all", noTags: false, hasTags: false, name: "", key: "total", min: null, max: null, needScore: false, noScore: false });
+    Object.assign(filt, { tags: [t], mode: "all", noTags: false, hasTags: false, name: "", key: "total", min: null, max: null, needScore: false, noScore: false, exclude: [] });
     applySearch(); lb.close(); say(`タグ「${t}」で絞り込みました`); return;
   }
   const td = e.target.closest("[data-tagdel]");
@@ -4313,7 +4375,7 @@ const isMobile = () => document.body.classList.contains("mobile");
 function applyDevice() { document.body.classList.toggle("mobile", device === "mobile"); $("#device").value = device; document.body.classList.toggle("topfix", topFix); $("#topFix").checked = topFix; $("#arrowSearch").checked = arrowSearch; 
   document.body.classList.toggle("nosb", !sbarOn); $("#sbarOn").checked = sbarOn;
   document.body.classList.toggle("fitcover", imgFit === "cover"); document.body.classList.toggle("fitlb", fitLb); document.body.classList.toggle("hidename", !showName); document.body.classList.toggle("hidelbname", !showLbName);
-  $("#imgFit").value = imgFit; $("#fitLb").checked = fitLb; $("#fitLbRow").hidden = imgFit !== "cover"; $("#showName").checked = showName; $("#showLbName").checked = showLbName; $("#replName").checked = replName; $("#showCount").checked = showCount; $("#tableLock").checked = tableLock; $("#tagFilterOn").checked = tagFilterOn; $("#swipeOn").checked = swipeOn; document.body.classList.toggle("tagfilter", tagFilterOn); $("#pw").disabled = tableLock; document.body.classList.toggle("hidecount", !showCount);
+  $("#imgFit").value = imgFit; $("#fitLb").checked = fitLb; $("#fitLbRow").hidden = imgFit !== "cover"; $("#showName").checked = showName; $("#showLbName").checked = showLbName; $("#replName").checked = replName; $("#showCount").checked = showCount; $("#tableLock").checked = tableLock; $("#tagFilterOn").checked = tagFilterOn; $("#swipeOn").checked = swipeOn; $("#lbHitOnly").checked = lbHitOnly; $("#delConfirm").checked = delConfirm; $("#enterNavOn").checked = enterNavOn; document.body.classList.toggle("tagfilter", tagFilterOn); $("#pw").disabled = tableLock; document.body.classList.toggle("hidecount", !showCount);
   document.body.classList.toggle("undoalt", undoSwap); $("#undoSwapPc").checked = $("#undoSwapMob").checked = undoSwap;
   document.documentElement.classList.toggle("light", uiTheme === "light"); $("#theme").value = uiTheme;
   document.querySelector('meta[name="theme-color"]')?.setAttribute("content", uiTheme === "light" ? "#f3f5f9" : "#171a21");
@@ -4349,7 +4411,7 @@ $("#device").addEventListener("change", e => {
 });
 function loadLocal() {
   topFix = lget("topfix", true); arrowSearch = lget("arrow", true); showHitPos = lget("hitpos", true);
-  holdCfg.sec = clampN(lget("hold", 0.4), 0.1, 2, 0.4); $("#holdSec").value = holdCfg.sec; viewHide = loadView(); hitTitle = lget("hittitle", true); rowsCfg = loadRows(); undoSwap = lget("undoswap", false); uiTheme = lget("theme", "dark"); sbarOn = lget("sbar", true); imgFit = lget("imgfit", "contain"); fitLb = lget("fitlb", false); showName = lget("shname", true); showLbName = lget("shlbname", true); replName = lget("replname", false); showCount = lget("showcount", true); tableLock = lget("tablelock", false); tagFilterOn = lget("tagfilter", true); swipeOn = lget("swipe", true);
+  holdCfg.sec = clampN(lget("hold", 0.4), 0.1, 2, 0.4); $("#holdSec").value = holdCfg.sec; viewHide = loadView(); hitTitle = lget("hittitle", true); rowsCfg = loadRows(); undoSwap = lget("undoswap", false); uiTheme = lget("theme", "dark"); sbarOn = lget("sbar", true); imgFit = lget("imgfit", "contain"); fitLb = lget("fitlb", false); showName = lget("shname", true); showLbName = lget("shlbname", true); replName = lget("replname", false); showCount = lget("showcount", true); tableLock = lget("tablelock", false); tagFilterOn = lget("tagfilter", true); swipeOn = lget("swipe", true); lbHitOnly = lget("lbhit", true); enterNavOn = lget("enternav", true); delConfirm = lget("delconfirm", true);
 }
 $("#size").addEventListener("change", () => {   // カードの大きさ → 1行の枚数・表全体の幅
   if (isMobile()) state.perRow = Math.min(60, capacityNow());
@@ -4432,23 +4494,23 @@ $("#fontSize").addEventListener("change", e => { lset("fs", clampN(e.target.valu
 /* 段(行)と項目 */
 const ITEM_DEFS = {   // [名前, 要素, 表示・非表示にする要素(省略時は同じ)]
   a_add: ["画像追加", "#ddAdd"], a_save: ["保存・書き出し", "#ddSave"], a_load: ["読み込み", "#ddLoad", "#ddLoad,#loadBtn2"], a_dest: ["保存先の表示", "#savedto"], a_auto: ["自動保存の時刻", "#autosaved"],
-  u_undo: ["元に戻す", "#undoBtn"], u_redo: ["やり直す", "#redoBtn"], u_tier: ["ティア追加", "#addTier"], u_cmp: ["総当りでランク付け", "#compare"], u_qc: ["クイック分類", "#qcBtn"], u_sc: ["点数で分類", "#scClassBtn"], u_sort: ["並べ替え", "#ddSort"], u_flt: ["絞り込み", "#ddFilter"], u_stat: ["集計", "#statBtn"],
+  u_undo: ["元に戻す", "#undoBtn"], u_redo: ["やり直す", "#redoBtn"], u_tier: ["ティア追加", "#addTier"], u_cmp: ["総当りでランク付け", "#compare"], u_qc: ["クイック分類", "#qcBtn"], u_sc: ["点数で分類", "#scClassBtn"], u_sort: ["並べ替え", "#ddSort"], u_flt: ["絞り込み", "#ddFilter"], u_stat: ["集計", "#statBtn"], u_top: ["ティアの操作", "#tierOpBtn"], u_tag: ["タグの辞書", "#tagMenuBtn"],
   s_q: ["名前で検索の入力欄", "#sq"], s_b: ["検索ボタン", "#sqBtn"], s_x: ["検索解除", "#sqClear"], s_h: ["一致画像選択", "#selhitBtn"],
   n_p: ["前の画像", "#hitPrev"], n_n: ["次の画像", "#hitNext"],
   msg: ["動作の説明・表示", "#msg"], tally: ["現在の表の状況", "#tally"], hitpos: ["検索結果(◯件/◯件中)", "#hitpos"]};
 const TITLE_ITEMS = [["t_title", "ティア表のタイトル", ".tw"], ["t_up", "⬆︎", "#goTop"], ["t_dn", "⬇︎", "#goBot"]];
-const defaultRows = () => [["a_add", "a_save", "a_load", "a_dest", "a_auto"], ["u_undo", "u_redo", "u_tier", "u_cmp", "u_qc", "u_sc", "u_sort", "u_flt", "u_stat"], ["s_q", "s_b", "s_x", "s_h"], ["n_p", "n_n"], ["msg"], ["tally"]];
-const defaultView = () => device === "mobile" ? { n_p: true, n_n: true, u_cmp: true, u_sort: true, u_stat: true, u_sc: true } : { n_p: true, n_n: true };   // PC:「前の画像」「次の画像」だけOFF / スマホ:さらに総当り・並べ替え・集計もOFF
+const defaultRows = () => [["a_add", "a_save", "a_load", "a_dest", "a_auto"], ["u_undo", "u_redo", "u_tier", "u_cmp", "u_qc", "u_sc", "u_sort", "u_flt", "u_stat", "u_top", "u_tag"], ["s_q", "s_b", "s_x", "s_h"], ["n_p", "n_n"], ["msg"], ["tally"]];
+const defaultView = () => device === "mobile" ? { n_p: true, n_n: true, u_cmp: true, u_sort: true, u_stat: true, u_sc: true, u_tag: true } : { n_p: true, n_n: true, u_tag: true };   // PC:「前の画像」「次の画像」だけOFF / スマホ:さらに総当り・並べ替え・集計もOFF
 function loadRows() {
   const r = lget("rows", null); if (!Array.isArray(r)) return defaultRows();
-  const hasSc = r.some(row => Array.isArray(row) && row.includes("u_sc"));
+  const hasSc = r.some(row => Array.isArray(row) && row.includes("u_sc")), hasTg = r.some(row => Array.isArray(row) && row.includes("u_tag")), hasTop = r.some(row => Array.isArray(row) && row.includes("u_top"));
   const seen = new Set(), skip = hitTitle ? new Set(["hitpos"]) : new Set();
-  const out = r.filter(Array.isArray).map(row => row.flatMap(k => k === "s_n" ? ["s_x"] : (k === "u_qc" && !hasSc ? ["u_qc", "u_sc"] : [k])).filter(k => ITEM_DEFS[k] && !skip.has(k) && !seen.has(k) && seen.add(k)));
+  const out = r.filter(Array.isArray).map(row => row.flatMap(k => k === "s_n" ? ["s_x"] : (k === "u_qc" && !hasSc ? ["u_qc", "u_sc"] : (k === "u_stat" ? ["u_stat", ...(!hasTop ? ["u_top"] : []), ...(!hasTg ? ["u_tag"] : [])] : [k]))).filter(k => ITEM_DEFS[k] && !skip.has(k) && !seen.has(k) && seen.add(k)));
   const miss = Object.keys(ITEM_DEFS).filter(k => !seen.has(k) && !(k === "hitpos" && hitTitle));
   if (miss.length) { if (!out.length) out.push([]); out[out.length - 1].push(...miss); }
   return out.length ? out : defaultRows();
 }
-function loadView() { const v = lget("view", null); if (!v) return defaultView(); if (!("n_p" in v)) v.n_p = v.n_n = true; if (device === "mobile" && !("u_sc" in v)) v.u_sc = true; return v; }
+function loadView() { const v = lget("view", null); if (!v) return defaultView(); if (!("n_p" in v)) v.n_p = v.n_n = true; if (device === "mobile" && !("u_sc" in v)) v.u_sc = true; if (!("u_tag" in v)) v.u_tag = true; return v; }
 let hitTitle = lget("hittitle", true);   // 「◯件/◯件中」が、タイトルに重なる位置にあるか
 let rowsCfg = loadRows(), viewHide = loadView();
 const saveRows = () => { lset("rows", rowsCfg); say("メニューの表示設定を変更しました"); }, saveView = () => { lset("view", viewHide); say("メニューの表示設定を変更しました"); };
@@ -4569,7 +4631,7 @@ viewdlg.addEventListener("pointermove", e => {
 viewdlg.addEventListener("pointerup", () => { if (!vdrag) return; const { k, target } = vdrag; vdrag = null; vdClear(); if (target) dropItem(k, target); renderViewDlg(); });
 viewdlg.addEventListener("pointercancel", () => { vdrag = null; vdClear(); renderViewDlg(); });
 /* ウィンドウの外を押したら閉じる */
-["#resetdlg", "#viewdlg", "#scoredlg", "#ratedlg", "#helpdlg", "#manualdlg", "#docdlg", "#scdlg", "#tagdlg", "#bulkdlg", "#dlg", "#qcdlg", "#statdlg", "#pngdlg", "#exdlg", "#sharedlg", "#verdlg"].forEach(q => {
+["#resetdlg", "#viewdlg", "#scoredlg", "#ratedlg", "#helpdlg", "#manualdlg", "#docdlg", "#scdlg", "#tierdlg", "#dupnamedlg", "#addmodedlg", "#tagdlg", "#bulkdlg", "#dlg", "#qcdlg", "#statdlg", "#pngdlg", "#exdlg", "#sharedlg", "#verdlg"].forEach(q => {
   const d = $(q); let down = false;
   const out = e => { if (e.target.closest?.("#colorpop")) return false; const r = d.getBoundingClientRect(); return e.clientX < r.left || e.clientX > r.right || e.clientY < r.top || e.clientY > r.bottom; };
   d.addEventListener("pointerdown", e => { down = out(e); });
@@ -4614,7 +4676,7 @@ function helpData() {   // 端末(PC・スマホ)に合わせた説明
       ["表内の画像を保存", "表の画像だけをまとめて保存します(ランクに入っている画像と未配置の画像の両方)。Chrome・Edgeのパソコン版では保存先を選ぶとその中に新しいフォルダが作られて画像が入ります。それ以外ではフォルダを含むZIPファイルが保存されます。画像は名前で保存され同じ名前には番号が付きます"],
       ["設定を保存", "ブラウザに保存されている設定をファイルに保存します。読み込みは「読み込み」の「設定を読み込む」で行います。表のデータは含まれません"],
       ["バージョン(残す・戻す・比べる)…", "今の状態に名前を付けてブラウザの中に残します。あとで戻したり今の表と比べたりできます"]]],
-    [mob ? "読み込み" : "読み込み ▾", mob ? "「保存・書き出し」の一番下にあります。「読み込み(保存したファイルを開く)」「ランクの型を読み込む」「設定を読み込む」「タグの辞書を読み込み」から選びます" : "保存したファイルを開きます。「表の読み込み」「ランクの型を読み込む」「設定を読み込む」「タグの辞書を読み込み」から選びます"],
+    [mob ? "読み込み" : "読み込み ▾", mob ? "「保存・書き出し」の一番下にあります。「読み込み(保存したファイルを開く)」「ランクの型を読み込む」「設定を読み込む」「タグの辞書を読み込み」から選びます" : "保存したファイルを開きます。「表の読み込み(追加)」はファイルの画像をいまの表の未配置に足します。「表の読み込み」「ランクの型を読み込む」「設定を読み込む」「タグの辞書を読み込み」から選びます"],
     ["元に戻す" + (arrows ? "(⬅︎)" : ""), "直前にした操作を取り消します" + (mob ? "" : "。Ctrl+Z でもできます")],
     ["やり直す" + (arrows ? "(➡︎)" : ""), "元に戻した操作をもう一度やり直します" + (mob ? "" : "。Ctrl+Shift+Z や Ctrl+Y でもできます")],
     ["ティア追加", "ランクを1つ増やします"],
@@ -4622,9 +4684,11 @@ function helpData() {   // 端末(PC・スマホ)に合わせた説明
     ["クイック分類", "画像を1枚ずつ大きく出して入れるランクを選んでいきます。選んだ画像はすぐ表に入ります"],
     ["点数で分類", "点数をもとに画像をランクへまとめて振り分けます。「基準」(総合評価か評価項目)と「対象」(未配置のみかすべての画像)と「分け方」(点数の範囲・順位の割合・点数順に均等)を選びます。実行前にランクごとの枚数を確認でき「ランクの数」もここで変えられます。点数が下限と同じ画像は上のランクに入ります。点数が入力されていない画像は動かしません"],
     ["並べ替え ▾", "3つの項目(対象・基準・順序)を設定して並べ替えます。基準を点数にした場合は点数を入力していない画像は最後に並びます" + hide2("u_sort")],
-    ["絞り込み ▾", "タグや評価点数などの条件で画像を絞り込みます。一致した画像は黄色い枠で目立ちそれ以外は薄く表示されます。絞り込み中はボタンが緑になります。" + jump("絞り込み")],
+    ["絞り込み ▾", "タグや評価点数などの条件で画像を絞り込みます。一致した画像は黄色い枠で目立ちそれ以外は薄く表示されます。絞り込み中はボタンが緑になります。" + "「除くタグ」で指定したタグが付いた画像を除けます。「他の画像を一時的に非表示」をONにすると一致しない画像が消えます。" + jump("絞り込み")],
     ["集計", "ランクごとの枚数・評価点数・タグの内訳を一覧で見ます" + hide2("u_stat")],
-    ["検索", "画像の名前で検索します。「検索」を押すと一致した画像が黄色い枠で目立ち「◯件一致」と出ます。" + jump("検索")],
+    ["重複している名前を探す", "同じ名前や似ている名前の画像をグループにして探します。探し方は「完全に同じ名前」から「少し似ている名前」まで選べます。チェックを入れた画像をまとめて削除できます"],
+    ["ティアの操作", "ランクを並べて操作する画面です。「ティア追加」と「ランクの数」でランクを増減できます。各ランクの「☰」を押しながらスライドして並び順を変えたり「色を変える」「↑」「↓」「✕」で色の変更・移動・削除ができます。ランク名はその場で書き換えられます。「一括操作」ではランクを選んでまとめて移動・削除できます"],
+    ["検索", "画像の名前で検索します。「検索」を押すと一致した画像が黄色い枠で目立ち「◯件一致」と出ます。" + "Enterを押すと1回目は結果を出し2回目から対象の画像へ移動します(Shift+Enterで前の画像へ)。" + jump("検索")],
     ["検索解除", "検索と絞り込みをまとめて解除します"],
     ["一致画像選択", "検索や絞り込みで一致した画像を選択モードでまとめて選びます"],
     ["選択モード", "下の「未配置の画像」の枠にあります。「選択モード」では複数の画像を選んでまとめて移動・削除・編集できます。" + (mob ? "タップで選び横にスライドして範囲を選べます" : "クリックで選びドラッグで範囲を選べます(空いた場所からドラッグしても始まります)") + "。まとめて編集では名前・タグ・評価点数を一度に変えられます"]];
@@ -4673,29 +4737,21 @@ function fitRowPads() {
 function syncRowsHidden() { document.querySelectorAll(".vrow").forEach(r => { const h = [...r.children].every(c => c.hidden); if (r.hidden !== h) r.hidden = h; }); }
 new MutationObserver(() => requestAnimationFrame(() => { syncRowsHidden(); fitRowPads(); })).observe($("#topbar"), { subtree: true, childList: true, characterData: true, attributes: true, attributeFilter: ["hidden"] });
 addEventListener("resize", fitRowPads);
-/* 画像詳細:鉛筆を押したときだけ、名前を変えられる */
+/* 画像詳細:名前は、いつでも書き換えられる(✎は、入力欄を選ぶボタン) */
 (function () {
-  let lastCommit = 0;
   const commit = () => {
-    const inp = $("#lb-name"); if (!inp || inp.readOnly) return;
+    const inp = $("#lb-name"); if (!inp) return;
     const c = state.cards[lbIds[lbI]], v = inp.value.trim().slice(0, 100);
-    inp.readOnly = true; lastCommit = Date.now();
     if (v && c && v !== c.name) { const old = c.name; c.name = v; touch(); render(); say(`「${old}」を「${v}」に変更しました`); }
     if (c) inp.value = c.name;
   };
-  lb.addEventListener("mousedown", e => { if (e.target.closest("#lb-edit")) e.preventDefault(); });   // 入力欄から、フォーカスを外さない
-  lb.addEventListener("click", e => {
-    if (!e.target.closest("#lb-edit")) return;
-    const inp = $("#lb-name");
-    if (!inp.readOnly) commit();
-    else if (Date.now() - lastCommit > 400) { inp.readOnly = false; inp.focus(); inp.select(); }
-  });
-  lb.addEventListener("keydown", e => { if (e.target.id === "lb-name" && e.key === "Enter") { e.preventDefault(); commit(); } });
+  lb.addEventListener("click", e => { if (e.target.closest("#lb-edit")) { const inp = $("#lb-name"); inp.focus(); inp.select(); } });
+  lb.addEventListener("keydown", e => { if (e.target.id === "lb-name" && e.key === "Enter") { e.preventDefault(); e.target.blur(); } });
   lb.addEventListener("focusout", e => { if (e.target.id === "lb-name") commit(); });
 })();
 $("#sqClear").onclick = () => {
   $("#sq").value = ""; query = ""; hitIdx = -1;
-  Object.assign(filt, { tags: [], mode: "all", noTags: false, hasTags: false, name: "", key: "total", min: null, max: null, needScore: false, noScore: false });   // 絞り込みも解除
+  Object.assign(filt, { tags: [], mode: "all", noTags: false, hasTags: false, name: "", key: "total", min: null, max: null, needScore: false, noScore: false, exclude: [] });   // 絞り込みも解除
   applySearch(); say("検索と絞り込みを解除しました");
 };   // 検索を解除する
 /* ウィンドウやメニューを開いた直後の0.2秒は、入力欄などを操作できないようにする(スクロール・外側・✕・閉じるは使える) */
@@ -4734,8 +4790,9 @@ ratedlg.addEventListener("click", e => { const b = e.target.closest("[data-rl]")
 lb.addEventListener("close", () => refreshBadges());
 /* PC:範囲外をダブルクリックして、選択モードを終える */
 document.addEventListener("dblclick", e => {
-  if (!selMode || isMobile() || !e.target.closest("main") || e.target.closest("button,input,select,textarea,label,a,.card,#topbar,dialog,.dd-menu,#selbar")) return;
-  setSelMode(false);
+  if (!selMode || !e.target.closest("main") || e.target.closest("button,input,select,textarea,label,a,.card,#topbar,dialog,.dd-menu,#selbar")) return;
+  if (selected.size) { selected.clear(); syncSelClasses(); renderPoolTools(); say("選択を解除しました"); }   // 選んでいるとき:選択を解除
+  else setSelMode(false);   // 何も選んでいないとき:選択モードを終える
 });
 /* 設定の列を、開く・閉じる */
 document.addEventListener("click", e => {
@@ -4947,7 +5004,7 @@ function docData(kind) {
       ["ティア表とは", "好きな画像をS・A・Bなどのランク(ティア)に分けて並べる表です。順位づけや好みの整理に使えます"],
       ["画像を入れる", "「画像追加」から画像を選ぶと「未配置」に入ります。未配置の画像をランクへドラッグして入れます" + (mob ? "。スマホは画像を長押ししてからドラッグします(長押しの時間は設定の「画像選択の時間」で変えられます)" : "")],
       ["画像を動かす", "画像をドラッグすると別のランクへ移せます。同じランクの中では並び順を変えられます。未配置に戻すこともできます"],
-      ["ランクを整える", "ランク名は文字をそのまま書き換えられます。色のボタンで色を変えられます。「ティア追加」でランクを増やせます。ランクの操作ボタンで上下の移動と削除ができます"],
+      ["ランクを整える", "ランク名は文字をそのまま書き換えられます。色のボタンで色を変えられます。「ティア追加」でランクを増やせます。ランクの操作ボタンで上下の移動と削除ができます。ランク名の左上の「－」「＋」でランクを折りたためます(折りたたんだランクの画像は検索・選択・画像詳細に出ません)"],
       ["画像詳細", (mob ? "画像をタップ" : "画像を右クリック") + "すると画像詳細が開きます。名前の変更・タグ・メモ・評価点数・ランクの移動ができます。タグを押すとそのタグで絞り込めます(設定で切り替えられます)" + (mob ? "。左右にスワイプすると前後の画像へ移れます(設定で切り替えられます)" : "")],
       ["選択モード", "「選択モード」では複数の画像を選んでまとめて移動・削除・編集できます。" + (mob ? "タップで選び横にスライドして範囲を選べます" : "クリックで選びドラッグで範囲を選べます(空いた場所からドラッグしても始まります)") + "。まとめて編集では名前・タグ・評価点数を一度に変えられます"],
       ["探す・絞り込む", "「名前で検索」で名前から探せます。「絞り込み」ではタグや評価点数で絞り込めます。一致した画像は黄色い枠で目立ちます"],
@@ -4977,6 +5034,8 @@ function docData(kind) {
       ["項目を選択して初期化", "選んだ設定だけを初めの値に戻します。「全選択」ですべてを選べます"],
       ["ランクに配置済み画像を未配置に移動", "すべてのランクの画像を未配置に戻します"],
       ["設定の保存・読み込み", "「設定を保存」で設定をファイルに保存し「設定を読み込む」で別のブラウザや端末でも同じ設定にできます。表のデータは含まれません"],
+      ["画像を削除するときに確認を出す", "OFFにすると画像を削除するときの確認が出なくなります(画像詳細の「削除」・未分類をすべて削除・選択モードの削除など)"],
+      ["検索・絞り込みの設定", "「画像詳細の「前へ」「次へ」を検索・絞り込みの対象だけにする」がONのときは検索や絞り込みで一致した画像の間だけを前後に移ります。「Enterで検索対象の次の画像へ移動する」がONのときは検索と絞り込みの入力欄でEnterを押すと1回目は結果を出し2回目から次の画像へ移ります(Shift+Enterで前の画像へ)"],
       ["画像詳細の設定", "「画像詳細のタグを押して絞り込む」はタグを押すとそのタグで絞り込みます。「画像詳細でスワイプして前後の画像へ移る」はスマホで左右にスワイプして画像を切り替えます"],
       ["説明書", "この説明書を開きます"]]],
     view: ["メニューの表示設定の説明", [
@@ -4988,7 +5047,7 @@ function docData(kind) {
       ["段の追加と削除", "「段を追加」で新しい段が増えます。「段を削除」すると中の項目は1つ下の段の先頭に入ります"],
       ["もとに戻すには", "「項目を選択して初期化」の「メニューの表示設定」で初めの並びと表示に戻ります"]]],
     tag: ["タグの辞書の説明", [
-      ["タグの辞書とは", "タグの候補と優先度を管理する画面です。「設定」の「タグの辞書」とまとめて編集の「タグの辞書」から開けます。内容は表のファイルに保存されます"],
+      ["タグの辞書とは", "タグの候補と優先度を管理する画面です。「設定」の「タグの辞書」とまとめて編集の「タグの辞書」とメニューの「タグの辞書」(初めは非表示)から開けます。内容は表のファイルに保存されます"],
       ["タグの追加", "入力欄にタグ名を入れて「追加」(またはEnter)で登録します。「,」を入れるとそこまでのタグが登録されます。追加したタグは一番下の優先順位に入ります"],
       ["優先順位", "「登録タグ一覧と優先度」に優先順位1から順に並びます。数字が小さいほど優先度が高くなります。カードに複数のタグがあるとき画像詳細では優先度の高いタグから順に並びます。「順位追加」「順位削除」で段を増減します(削除した段のタグは1つ上の段に入ります)"],
       ["タグの移動", "タグを押しながらスライドすると別の優先順位や同じ段の別の位置へ動かせます"],
@@ -5095,7 +5154,7 @@ lb.addEventListener("input", e => {
 lb.addEventListener("change", e => { if (e.target.id === "lb-memo") say(`「${state.cards[lbIds[lbI]].name}」のメモを変更しました`); });
 function lbStep(d) { const n = lbIds.length; if (n < 2) return; lbI = (lbI + d + n) % n; renderLb(); }   // 最後の次は最初へ、最初の前は最後へ
 let swX = 0, swY = 0, swOk = false;
-lb.addEventListener("touchstart", e => { const t0 = e.target, okTarget = t0.id === "lb-name" ? t0.readOnly : t0.id === "lb-move" ? document.activeElement !== t0 : !t0.closest("input,textarea,select,button");   // 名前を編集中・ランクを選択中でなければ、スワイプできる
+lb.addEventListener("touchstart", e => { const t0 = e.target, okTarget = t0.id === "lb-name" ? document.activeElement !== t0 : t0.id === "lb-move" ? document.activeElement !== t0 : !t0.closest("input,textarea,select,button");   // 名前を編集中・ランクを選択中でなければ、スワイプできる
   swOk = swipeOn && isMobile() && e.touches.length === 1 && okTarget; if (swOk) { swX = e.touches[0].clientX; swY = e.touches[0].clientY; } }, { passive: true });
 lb.addEventListener("touchend", e => {
   if (!swOk) return; swOk = false;
@@ -5213,6 +5272,228 @@ async function saveAllImages() {
   say(dir ? `表内の画像${ids.length}枚を、フォルダ「${folder}」に保存しました` : `表内の画像${ids.length}枚を、フォルダ「${folder}」を含むZIPファイルとして保存しました`);
 }
 $("#imgSaveAll").onclick = () => saveAllImages().catch(() => say("画像を保存できませんでした"));
+/* ---------- 絞り込み・検索の追加機能 ---------- */
+var fltHide = false, lbHitOnly = lget("lbhit", true), enterNavOn = lget("enternav", true), enterStamp = "";
+const navStamp = () => query + "|" + JSON.stringify(filt);
+onChg("#lbHitOnly", t => { lbHitOnly = t.checked; lset("lbhit", lbHitOnly); });
+onChg("#enterNavOn", t => { enterNavOn = t.checked; lset("enternav", enterNavOn); });
+$("#tagMenuBtn").onclick = () => openTagDlg(false);
+/* ---------- 追加:削除の確認・ランクの折りたたみ・ティアの操作 ---------- */
+var delConfirm = lget("delconfirm", true);
+const confirmDel = msg => !delConfirm || confirm(msg);
+onChg("#delConfirm", t => { delConfirm = t.checked; lset("delconfirm", delConfirm); });
+function fitTierNames() { document.querySelectorAll(".t-label textarea").forEach(el => { el.style.height = "auto"; el.style.height = el.scrollHeight + "px"; }); }
+addEventListener("resize", fitTierNames);
+document.addEventListener("input", e => { if (e.target.dataset?.act === "tname") fitTierNames(); });
+document.addEventListener("keydown", e => { if (e.target.dataset?.act === "tname" && e.key === "Enter") { e.preventDefault(); e.target.blur(); } });
+document.addEventListener("click", e => {   // ランクの「＋」「－」
+  const b = e.target.closest('[data-act="tfold"]'); if (!b) return;
+  const t = tierOf(b); if (!t) return;
+  t.collapsed = !t.collapsed; touch(); render(); say(t.collapsed ? `ランク「${t.name}」を折りたたみました` : `ランク「${t.name}」を開きました`);
+});
+lb.tabIndex = -1;   // 前後へ移ったあとも、左右キーが効くように、画像詳細にフォーカスを戻す
+new MutationObserver(() => { if (lb.open && !lb.contains(document.activeElement)) lb.focus({ preventScroll: true }); }).observe(lb, { childList: true });
+lb.addEventListener("click", e => {   // 画像詳細の「削除」
+  if (!e.target.closest("#lb-del")) return;
+  const id = lbIds[lbI], keep = lbI; deleteIds([id]);
+  if (state.cards[id]) return;
+  lbIds = lbIds.filter(x => state.cards[x]);
+  if (!lbIds.length) { lb.close(); return; }
+  lbI = Math.min(keep, lbIds.length - 1); renderLb();
+});
+const tierdlg = $("#tierdlg");
+const toSel = new Set();
+function renderTierDlg() {
+  const n = state.tiers.length, keep = ["to-op", "to-dest"].map(id => [id, $("#" + id)?.value]);
+  tierdlg.innerHTML = `<button class="vd-x" data-vx aria-label="閉じる">✕</button>
+    <div class="dlg-head"><span></span><h3 class="dlg-title">ティアの操作</h3><span></span></div>
+    <div class="tg-row tg-line"><button data-to="add">ティア追加</button><label class="size">ランクの数 <span><input id="to-n" type="number" min="1" max="30" step="1" value="${n}"> 個</span></label></div>
+    <div class="tg-line">${state.tiers.map((t, i) => `<div class="to-row" data-id="${t.id}"><span class="to-no">${i + 1}</span><span class="to-name"><span class="sc-chip" style="background:${t.color}"></span><input class="to-nm" data-id="${t.id}" value="${esc(t.name)}" maxlength="40" aria-label="ランク名"></span><span class="to-ops"><span class="to-grip" title="押しながらスライドで移動">☰</span><button class="colorbtn" data-to="color" data-id="${t.id}" style="background:${t.color}" title="色を変える" aria-label="色を変える"></button><button data-to="up" data-id="${t.id}" ${i === 0 ? "disabled" : ""}>↑</button><button data-to="down" data-id="${t.id}" ${i === n - 1 ? "disabled" : ""}>↓</button><button data-to="del" data-id="${t.id}">✕</button></span></div>`).join("")}</div>
+    <div class="tg-line">
+      <div class="tg-h"><b>一括操作</b></div>
+      <div class="to-chips">${state.tiers.map(t => `<span class="to-chip" data-id="${t.id}"><input type="checkbox" class="to-sel" data-id="${t.id}" ${toSel.has(t.id) ? "checked" : ""} aria-label="選ぶ"><span class="sc-chip" style="background:${t.color}"></span>${esc(t.name)}</span>`).join("")}</div>
+      <div class="tg-bulk">
+        <div class="tg-bf"><span>操作内容</span><select id="to-op"><option value="">---(未選択)</option><option value="move">移動する</option><option value="del">削除する</option></select></div>
+        <div class="tg-bf" id="to-dw" hidden><span>移動先</span><select id="to-dest"><option value="first">先頭へ</option><option value="last">末尾へ</option>${state.tiers.map(t => `<option value="b${t.id}">「${esc(t.name)}」の前へ</option>`).join("")}</select></div>
+        <button class="primary" data-to="bgo">実行</button>
+      </div>
+    </div>
+    <div class="cmp-foot" style="justify-content:flex-end"><button id="to-close">閉じる</button></div>`;
+  keep.forEach(([id, v]) => { const el = $("#" + id); if (el && v !== undefined && [...el.options].some(o => o.value === v)) el.value = v; });
+  if ($("#to-dw")) $("#to-dw").hidden = $("#to-op").value !== "move";
+}
+$("#tierOpBtn").onclick = () => { renderTierDlg(); tierdlg.showModal(); tierdlg.scrollTop = 0; document.activeElement?.blur?.(); };
+tierdlg.addEventListener("click", e => {
+  if (e.target.closest(".vd-x") || e.target.id === "to-close") { tierdlg.close(); return; }
+  const b = e.target.closest("[data-to]"); if (!b) return;
+  const a = b.dataset.to, i = state.tiers.findIndex(t => t.id === b.dataset.id);
+  if (a === "add") $("#addTier").click();
+  else if (a === "color") {
+    const t = state.tiers[i], ctx = tierCtx(t), orig = ctx.set;
+    ctx.set = c => { orig(c); b.style.background = c; const chip = b.closest(".to-row").querySelector(".sc-chip"); if (chip) chip.style.background = c; };
+    openColorPop(b, ctx); return;
+  }
+  else if (a === "up" && i > 0) { [state.tiers[i - 1], state.tiers[i]] = [state.tiers[i], state.tiers[i - 1]]; touch(); render(); say(`ランク「${state.tiers[i - 1].name}」を上へ移動しました`); }
+  else if (a === "down" && i >= 0 && i < state.tiers.length - 1) { [state.tiers[i + 1], state.tiers[i]] = [state.tiers[i], state.tiers[i + 1]]; touch(); render(); say(`ランク「${state.tiers[i + 1].name}」を下へ移動しました`); }
+  else if (a === "bgo") {   // 一括操作:選んだランクを、まとめて移動・削除する
+    const ids = state.tiers.map(t => t.id).filter(id => toSel.has(id)), op = $("#to-op").value;
+    if (!ids.length || !op) { say("選ぶランクと操作内容を選んでください"); return; }
+    if (op === "del") {
+      if (ids.length >= state.tiers.length) { say("すべてのランクは削除できません"); return; }
+      const cnt = state.tiers.filter(t => ids.includes(t.id)).reduce((n, t) => n + t.items.length, 0);
+      if (!confirm(`${ids.length}個のランクを削除します。` + (cnt ? `中の${cnt}枚の画像は未配置に移ります。` : "") + "よろしいですか?")) return;
+      state.tiers.filter(t => ids.includes(t.id)).forEach(t => state.pool.push(...t.items));
+      state.tiers = state.tiers.filter(t => !ids.includes(t.id)); ids.forEach(id => toSel.delete(id));
+      touch(); render(); say(`ランクを${ids.length}個削除しました`);
+    } else {
+      const moving = state.tiers.filter(t => toSel.has(t.id)), rest = state.tiers.filter(t => !toSel.has(t.id)), dest = $("#to-dest").value;
+      let at = dest === "first" ? 0 : dest === "last" ? rest.length : rest.findIndex(t => t.id === dest.slice(1));
+      if (at < 0) { say("移動先に、選んだランクが含まれています"); return; }
+      rest.splice(at, 0, ...moving); state.tiers = rest;
+      touch(); render(); say(`ランクを${moving.length}個移動しました`);
+    }
+  }
+  else if (a === "del") { const el = [...document.querySelectorAll(".tier")].find(x => tierOf(x)?.id === b.dataset.id); el?.querySelector('[data-act="del"]')?.click(); }
+  else return;
+  renderTierDlg();
+});
+tierdlg.addEventListener("change", e => {
+  const el = e.target;
+  if (el.classList.contains("to-sel")) { if (el.checked) toSel.add(el.dataset.id); else toSel.delete(el.dataset.id); return; }
+  if (el.id === "to-op") { $("#to-dw").hidden = el.value !== "move"; return; }
+  if (el.classList.contains("to-nm")) {   // ランク名を変える
+    const t = state.tiers.find(x => x.id === el.dataset.id), v = el.value.trim().slice(0, 40);
+    if (t && v && v !== t.name) { const old = t.name; t.name = v; touch(); render(); say(`ランク名を変更しました(${old}➡︎${v})`); }
+    renderTierDlg(); return;
+  }
+});
+tierdlg.addEventListener("keydown", e => { if (e.target.classList.contains("to-nm") && e.key === "Enter") { e.preventDefault(); e.target.blur(); } });
+tierdlg.addEventListener("change", e => { if (e.target.id !== "to-n") return; const v = Math.round(+e.target.value); if (isFinite(v) && v >= 1) setTierCount(v); renderTierDlg(); });
+let todrag = null;
+const toClear = () => tierdlg.querySelectorAll(".to-ob,.to-oa,.to-cb,.to-ca").forEach(x => x.classList.remove("to-ob", "to-oa", "to-cb", "to-ca"));
+tierdlg.addEventListener("pointerdown", e => {
+  const g = e.target.closest(".to-grip, .to-chip"); if (!g || e.target.closest("input")) return;
+  e.preventDefault(); const row = g.closest(".to-row, .to-chip"); todrag = { id: row.dataset.id, target: null }; row.classList.add("to-drag"); g.setPointerCapture(e.pointerId);
+});
+tierdlg.addEventListener("pointermove", e => {
+  if (!todrag) return;
+  toClear(); todrag.target = null;
+  const over = document.elementFromPoint(e.clientX, e.clientY)?.closest(".to-row, .to-chip");
+  if (over && over.dataset.id !== todrag.id) { const r = over.getBoundingClientRect(), before = over.classList.contains("to-chip") ? e.clientX < r.left + r.width / 2 : e.clientY < r.top + r.height / 2; todrag.target = { id: over.dataset.id, before }; over.classList.add(over.classList.contains("to-chip") ? (before ? "to-cb" : "to-ca") : (before ? "to-ob" : "to-oa")); }
+  const r = tierdlg.getBoundingClientRect();
+  if (e.clientY < r.top + 40) tierdlg.scrollTop -= 12; else if (e.clientY > r.bottom - 40) tierdlg.scrollTop += 12;
+});
+tierdlg.addEventListener("pointerup", () => {
+  if (!todrag) return; const { id, target } = todrag; todrag = null; toClear();
+  if (target) {
+    const from = state.tiers.findIndex(t => t.id === id), [tt] = state.tiers.splice(from, 1);
+    let to = state.tiers.findIndex(t => t.id === target.id); if (!target.before) to++;
+    state.tiers.splice(to, 0, tt); touch(); render(); say(`ランク「${tt.name}」を移動しました`);
+  }
+  renderTierDlg();
+});
+tierdlg.addEventListener("pointercancel", () => { todrag = null; toClear(); renderTierDlg(); });
+fitTierNames();
+/* ---------- 重複している名前を探す ---------- */
+const dupndlg = $("#dupnamedlg");
+let dnLevel = 3;
+const kataToHira = t => t.replace(/[ァ-ヶ]/g, c => String.fromCharCode(c.charCodeAt(0) - 0x60));
+const normName = n => kataToHira(String(n).normalize("NFKC").toLowerCase()).replace(/[\s\u3000_\-‐－―ー・,.。、:;!！?？~〜()（）\[\]【】「」『』"'’“”]/g, "");
+function lev(a, b, max) {   // 文字の違いの数(max を超えたら打ち切り)
+  const m = a.length, n = b.length; if (Math.abs(m - n) > max) return max + 1;
+  let prev = Array.from({ length: n + 1 }, (_, j) => j), cur = new Array(n + 1);
+  for (let i = 1; i <= m; i++) {
+    cur[0] = i; let rowMin = i;
+    for (let j = 1; j <= n; j++) { cur[j] = Math.min(prev[j] + 1, cur[j - 1] + 1, prev[j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1)); if (cur[j] < rowMin) rowMin = cur[j]; }
+    if (rowMin > max) return max + 1;
+    [prev, cur] = [cur, prev];
+  }
+  return prev[n];
+}
+function dnFind(level) {
+  const ids = [...state.tiers.flatMap(t => t.items), ...state.pool].filter(id => state.cards[id]);
+  const keys = ids.map(id => level === 1 ? String(state.cards[id].name) : normName(state.cards[id].name));
+  const par = ids.map((_, i) => i), find = i => par[i] === i ? i : (par[i] = find(par[i])), uni = (a, b) => { par[find(a)] = find(b); };
+  if (level <= 2) { const seen = new Map(); keys.forEach((k, i) => { if (!k) return; if (seen.has(k)) uni(i, seen.get(k)); else seen.set(k, i); }); }
+  else {
+    const ratio = level === 3 ? 0.8 : 0.65;
+    if (ids.length > 2500) { say("画像が多いため「似ている名前」の検索はできません。「表記が違うだけの名前」までを選んでください"); return []; }
+    for (let i = 0; i < ids.length; i++) for (let j = i + 1; j < ids.length; j++) {
+      const a = keys[i], b = keys[j]; if (!a || !b) continue;
+      if (a === b || (a.length >= 3 && b.length >= 3 && (a.includes(b) || b.includes(a)))) { uni(i, j); continue; }
+      const L = Math.max(a.length, b.length), max = Math.floor(L * (1 - ratio));
+      if (lev(a, b, max) <= max) uni(i, j);
+    }
+  }
+  const g = new Map(); ids.forEach((id, i) => { const r = find(i); if (!g.has(r)) g.set(r, []); g.get(r).push(id); });
+  return [...g.values()].filter(a => a.length >= 2);
+}
+function renderDupName(groups) {
+  const lv = [[1, "完全に同じ名前"], [2, "表記が違うだけの名前(記号・空白・全角半角・ひらがなカタカナを無視)"], [3, "似ている名前(80%以上)"], [4, "少し似ている名前(65%以上)"]];
+  dupndlg.innerHTML = `<button class="vd-x" data-vx aria-label="閉じる">✕</button>
+    <div class="dlg-head"><span></span><h3 class="dlg-title">重複している名前を探す</h3><span></span></div>
+    <label class="size">探し方 <select id="dn-lv">${lv.map(([v, l]) => `<option value="${v}" ${dnLevel === v ? "selected" : ""}>${l}</option>`).join("")}</select></label>
+    <p class="cmp-hint" style="text-align:left">${groups.length ? `${groups.length}グループ見つかりました。削除する画像にチェックを入れてください` : "見つかりませんでした"}</p>
+    ${groups.map((g, gi) => `<div class="dn-g"><div class="dn-gh">グループ${gi + 1}(${g.length}枚)</div>${g.map(id => `<label class="dn-it"><input type="checkbox" class="dn-ck" data-id="${id}"><img src="${imgUrl(state.cards[id])}" alt=""><span class="dn-nm">${esc(state.cards[id].name)}</span><span class="dn-pl">${esc(tierNameOf(id))}</span></label>`).join("")}</div>`).join("")}
+    <div class="cmp-foot" style="justify-content:flex-end"><button data-dn="sel2">各グループの2枚目以降を選ぶ</button><button class="primary" data-dn="del">選んだ画像を削除</button><button id="dn-close">閉じる</button></div>`;
+  dupndlg._groups = groups;
+}
+$("#dupNameBtn").onclick = () => { renderDupName(dnFind(dnLevel)); dupndlg.showModal(); dupndlg.scrollTop = 0; document.activeElement?.blur?.(); };
+dupndlg.addEventListener("change", e => { if (e.target.id === "dn-lv") { dnLevel = +e.target.value; renderDupName(dnFind(dnLevel)); } });
+dupndlg.addEventListener("click", e => {
+  if (e.target.closest(".vd-x") || e.target.id === "dn-close") { dupndlg.close(); return; }
+  const a = e.target.closest("[data-dn]")?.dataset.dn; if (!a) return;
+  if (a === "sel2") dupndlg.querySelectorAll(".dn-g").forEach(g => [...g.querySelectorAll(".dn-ck")].forEach((c, i) => { c.checked = i > 0; }));
+  else if (a === "del") {
+    const ids = [...dupndlg.querySelectorAll(".dn-ck:checked")].map(c => c.dataset.id);
+    if (!ids.length) { say("削除する画像にチェックを入れてください"); return; }
+    deleteIds(ids); renderDupName(dnFind(dnLevel));
+  }
+});
+/* ---------- 表の読み込み(追加) ---------- */
+const addmodedlg = $("#addmodedlg");
+let addPending = null;
+$("#loadAddBtn").onclick = () => $("#add-file").click();
+$("#loadAddBtn2").onclick = () => $("#add-file").click();
+$("#add-file").addEventListener("change", async e => {
+  const f = e.target.files[0]; e.target.value = ""; if (!f) return;
+  try {
+    const d = JSON.parse(await f.text());
+    if (!Array.isArray(d.tiers) || !d.cards || typeof d.cards !== "object" || !Array.isArray(d.pool)) throw new Error();
+    addPending = d;
+    const n = Object.keys(cleanCards(d.cards)).length;
+    addmodedlg.innerHTML = `<button class="vd-x" data-vx aria-label="閉じる">✕</button>
+      <div class="dlg-head"><span></span><h3 class="dlg-title">表の読み込み(追加)</h3><span></span></div>
+      <p class="cmp-hint" style="text-align:left">「${esc(String(d.title || "無題"))}」の画像${n}枚を、いまの表の未配置に追加します。ランクや大きさなど、表の設定はいまの表のままです</p>
+      <div class="cmp-opt"><label><input type="radio" name="addmode" value="strip" checked> タグ・点数を削除して追加</label><label><input type="radio" name="addmode" value="merge"> タグ・点数も項目を増やして追加</label></div>
+      <p class="cmp-hint" style="text-align:left">「項目を増やして追加」では、読み込む表にだけある点数項目を、いまの点数項目に足します(ジャンルが同じときだけ)。タグは、そのまま画像に付きます</p>
+      <div class="cmp-foot" style="justify-content:flex-end"><button class="primary" id="am-go">追加する</button><button id="am-close">閉じる</button></div>`;
+    addmodedlg.showModal(); document.activeElement?.blur?.();
+  } catch (err) { say("このファイルは読み込めませんでした。表のファイルを選んでください"); }
+});
+addmodedlg.addEventListener("click", e => {
+  if (e.target.closest(".vd-x") || e.target.id === "am-close") { addmodedlg.close(); return; }
+  if (e.target.id !== "am-go" || !addPending) return;
+  const d = addPending, mode = addmodedlg.querySelector('input[name="addmode"]:checked').value;
+  const cards = cleanCards(d.cards), order = [...d.tiers.flatMap(t => Array.isArray(t.items) ? t.items : []), ...(Array.isArray(d.pool) ? d.pool : []), ...Object.keys(cards)];
+  const seen = new Set(); let n = 0;
+  for (const oid of order) {
+    if (!cards[oid] || seen.has(oid)) continue; seen.add(oid);
+    const c = cards[oid], nid = uid();
+    if (mode === "strip") { delete c.tags; delete c.sc; }
+    state.cards[nid] = c; state.pool.push(nid); n++;
+  }
+  let extra = 0;
+  if (mode === "merge") {
+    const dg = validGenre(d.genre);
+    if (dg && dg.type === state.genre.type) {
+      const cur = GENRES[state.genre.type].items, inc = (dg.items && dg.items[dg.type]) || GENRE_DEFAULTS[dg.type], add = inc.filter(([k]) => !cur.some(x => x[0] === k));
+      if (add.length) { setItems([...cur, ...add].slice(0, 20)); extra = add.length; }
+    }
+  }
+  addPending = null; addmodedlg.close(); touch(); render();
+  say(`「${d.title || "無題"}」の画像${n}枚を未配置に追加しました` + (extra ? `(点数項目を${extra}個増やしました)` : ""));
+});
 window.addEventListener("beforeunload", e => {
   if (dirty && Object.keys(state.cards).length) { e.preventDefault(); e.returnValue = ""; }
 });
