@@ -390,7 +390,7 @@ body.mobile .tier.collapsed{grid-template-columns:minmax(0,1fr)}
 .t-label textarea{width:100%;background:transparent;border:0;color:inherit;text-align:center;font:800 22px/1.2 var(--font);padding:4px 0;resize:none;overflow:hidden;white-space:pre-wrap;word-break:break-all;box-sizing:border-box;display:block}
 .t-label textarea:focus-visible{outline-color:currentColor}
 body.mobile .t-label textarea{width:auto;flex:1;min-width:0;text-align:left;font-size:20px;resize:none;overflow:hidden;white-space:pre-wrap;word-break:break-all;box-sizing:border-box;display:block}
-#lb:focus{outline:none}
+#lb:focus,#qcdlg:focus{outline:none}
 .to-row{display:flex;align-items:center;gap:10px;padding:6px 0;border-bottom:1px solid var(--line)}
 .to-no{flex:0 0 1.8em;text-align:right;color:var(--sub)}
 .to-name{flex:1;min-width:0;word-break:break-all}
@@ -537,6 +537,7 @@ body.mobile #autosaved{flex:1 1 0!important;min-width:0;white-space:normal;line-
             <label class="size"><span><input type="checkbox" id="autoOn" checked> 自動保存をONにする</span></label>
             <label class="size" title="最後に操作してからこの秒数がたつと自動で保存します">保存の間隔 <span><input id="autoSec" type="number" min="0.5" max="600" step="0.5" value="5"> 秒</span></label>
             <label class="size"><span><input type="checkbox" id="delConfirm" checked> 画像を削除するときに確認を出す</span></label>
+            <label class="size"><span><input type="checkbox" id="carryAdd" checked> 重複した画像を削除するとき残す画像に情報があってもタグ・メモを追加する</span></label>
           </div>
           <div class="set-col">
             <div class="set-h sh1">表示関連<button type="button" class="set-tgl" aria-label="開く・閉じる">－</button></div>
@@ -604,6 +605,7 @@ body.mobile #autosaved{flex:1 1 0!important;min-width:0;white-space:normal;line-
           <div class="set-h mobonly">読み込み</div>
           <button id="loadBtn2" class="mobonly">読み込み(保存したファイルを開く)</button>
           <button id="loadAddBtn2" class="mobonly">表の読み込み(追加)</button>
+          <button id="loadHtmlBtn2" class="mobonly">共有用HTMLの読み込み</button>
           <hr class="ddline lnsw mobonly">
           <button id="tplLoad" class="mobonly">ランクの型を読み込む</button>
           <button id="setImport" class="mobonly">設定を読み込む</button>
@@ -615,6 +617,7 @@ body.mobile #autosaved{flex:1 1 0!important;min-width:0;white-space:normal;line-
         <div class="dd-menu" id="menuLoad" hidden>
           <button id="loadBtn">表の読み込み</button>
           <button id="loadAddBtn" title="読み込んだ表の画像を、いまの表の未配置に追加します">表の読み込み(追加)</button>
+          <button id="loadHtmlBtn" title="共有用HTMLから、表を復元します">共有用HTMLの読み込み</button>
           <hr class="ddline">
           <button id="tplLoad2">ランクの型を読み込む</button>
           <button id="setImport2">設定を読み込む</button>
@@ -671,6 +674,7 @@ body.mobile #autosaved{flex:1 1 0!important;min-width:0;white-space:normal;line-
 <dialog id="tierdlg"></dialog>
 <dialog id="dupnamedlg"></dialog>
 <dialog id="addmodedlg"></dialog>
+<input type="file" id="html-file" accept=".html,.htm,text/html" hidden>
 <input type="file" id="add-file" accept=".json,application/json,.tierlist" hidden>
 <dialog id="tagdlg"></dialog>
 <input type="file" id="tg-file" accept=".json,application/json" hidden>
@@ -3034,8 +3038,9 @@ dupdlg.addEventListener("click", async e => {
   if (e.target.closest('[data-dup="close"]')) { dupdlg.close(); return; }
   if (e.target.id === "dup-del") {
     const ids = [...dupdlg.querySelectorAll(".dup-chk input:checked")].map(x => x.dataset.id);
+    const apply = planCarry([...dupdlg.querySelectorAll(".dup-group")].map(g => [...g.querySelectorAll(".dup-chk input")].map(x => x.dataset.id)), ids);
     deleteIds(ids);   // 確認を挟みます。削除したあとは閉じてから「削除を取り消す」「元に戻す」で戻せます
-    if (ids.every(id => !state.cards[id])) await runDup();
+    if (ids.every(id => !state.cards[id])) { apply(); await runDup(); }
   }
 });
 
@@ -4375,7 +4380,7 @@ const isMobile = () => document.body.classList.contains("mobile");
 function applyDevice() { document.body.classList.toggle("mobile", device === "mobile"); $("#device").value = device; document.body.classList.toggle("topfix", topFix); $("#topFix").checked = topFix; $("#arrowSearch").checked = arrowSearch; 
   document.body.classList.toggle("nosb", !sbarOn); $("#sbarOn").checked = sbarOn;
   document.body.classList.toggle("fitcover", imgFit === "cover"); document.body.classList.toggle("fitlb", fitLb); document.body.classList.toggle("hidename", !showName); document.body.classList.toggle("hidelbname", !showLbName);
-  $("#imgFit").value = imgFit; $("#fitLb").checked = fitLb; $("#fitLbRow").hidden = imgFit !== "cover"; $("#showName").checked = showName; $("#showLbName").checked = showLbName; $("#replName").checked = replName; $("#showCount").checked = showCount; $("#tableLock").checked = tableLock; $("#tagFilterOn").checked = tagFilterOn; $("#swipeOn").checked = swipeOn; $("#lbHitOnly").checked = lbHitOnly; $("#delConfirm").checked = delConfirm; $("#enterNavOn").checked = enterNavOn; document.body.classList.toggle("tagfilter", tagFilterOn); $("#pw").disabled = tableLock; document.body.classList.toggle("hidecount", !showCount);
+  $("#imgFit").value = imgFit; $("#fitLb").checked = fitLb; $("#fitLbRow").hidden = imgFit !== "cover"; $("#showName").checked = showName; $("#showLbName").checked = showLbName; $("#replName").checked = replName; $("#showCount").checked = showCount; $("#tableLock").checked = tableLock; $("#tagFilterOn").checked = tagFilterOn; $("#swipeOn").checked = swipeOn; $("#lbHitOnly").checked = lbHitOnly; $("#delConfirm").checked = delConfirm; $("#carryAdd").checked = carryAdd; $("#enterNavOn").checked = enterNavOn; document.body.classList.toggle("tagfilter", tagFilterOn); $("#pw").disabled = tableLock; document.body.classList.toggle("hidecount", !showCount);
   document.body.classList.toggle("undoalt", undoSwap); $("#undoSwapPc").checked = $("#undoSwapMob").checked = undoSwap;
   document.documentElement.classList.toggle("light", uiTheme === "light"); $("#theme").value = uiTheme;
   document.querySelector('meta[name="theme-color"]')?.setAttribute("content", uiTheme === "light" ? "#f3f5f9" : "#171a21");
@@ -4411,7 +4416,7 @@ $("#device").addEventListener("change", e => {
 });
 function loadLocal() {
   topFix = lget("topfix", true); arrowSearch = lget("arrow", true); showHitPos = lget("hitpos", true);
-  holdCfg.sec = clampN(lget("hold", 0.4), 0.1, 2, 0.4); $("#holdSec").value = holdCfg.sec; viewHide = loadView(); hitTitle = lget("hittitle", true); rowsCfg = loadRows(); undoSwap = lget("undoswap", false); uiTheme = lget("theme", "dark"); sbarOn = lget("sbar", true); imgFit = lget("imgfit", "contain"); fitLb = lget("fitlb", false); showName = lget("shname", true); showLbName = lget("shlbname", true); replName = lget("replname", false); showCount = lget("showcount", true); tableLock = lget("tablelock", false); tagFilterOn = lget("tagfilter", true); swipeOn = lget("swipe", true); lbHitOnly = lget("lbhit", true); enterNavOn = lget("enternav", true); delConfirm = lget("delconfirm", true);
+  holdCfg.sec = clampN(lget("hold", 0.4), 0.1, 2, 0.4); $("#holdSec").value = holdCfg.sec; viewHide = loadView(); hitTitle = lget("hittitle", true); rowsCfg = loadRows(); undoSwap = lget("undoswap", false); uiTheme = lget("theme", "dark"); sbarOn = lget("sbar", true); imgFit = lget("imgfit", "contain"); fitLb = lget("fitlb", false); showName = lget("shname", true); showLbName = lget("shlbname", true); replName = lget("replname", false); showCount = lget("showcount", true); tableLock = lget("tablelock", false); tagFilterOn = lget("tagfilter", true); swipeOn = lget("swipe", true); lbHitOnly = lget("lbhit", true); enterNavOn = lget("enternav", true); delConfirm = lget("delconfirm", true); carryAdd = lget("carryadd", true);
 }
 $("#size").addEventListener("change", () => {   // カードの大きさ → 1行の枚数・表全体の幅
   if (isMobile()) state.perRow = Math.min(60, capacityNow());
@@ -4676,7 +4681,7 @@ function helpData() {   // 端末(PC・スマホ)に合わせた説明
       ["表内の画像を保存", "表の画像だけをまとめて保存します(ランクに入っている画像と未配置の画像の両方)。Chrome・Edgeのパソコン版では保存先を選ぶとその中に新しいフォルダが作られて画像が入ります。それ以外ではフォルダを含むZIPファイルが保存されます。画像は名前で保存され同じ名前には番号が付きます"],
       ["設定を保存", "ブラウザに保存されている設定をファイルに保存します。読み込みは「読み込み」の「設定を読み込む」で行います。表のデータは含まれません"],
       ["バージョン(残す・戻す・比べる)…", "今の状態に名前を付けてブラウザの中に残します。あとで戻したり今の表と比べたりできます"]]],
-    [mob ? "読み込み" : "読み込み ▾", mob ? "「保存・書き出し」の一番下にあります。「読み込み(保存したファイルを開く)」「ランクの型を読み込む」「設定を読み込む」「タグの辞書を読み込み」から選びます" : "保存したファイルを開きます。「表の読み込み(追加)」はファイルの画像をいまの表の未配置に足します。「表の読み込み」「ランクの型を読み込む」「設定を読み込む」「タグの辞書を読み込み」から選びます"],
+    [mob ? "読み込み" : "読み込み ▾", mob ? "「保存・書き出し」の一番下にあります。「読み込み(保存したファイルを開く)」「ランクの型を読み込む」「設定を読み込む」「タグの辞書を読み込み」から選びます" : "保存したファイルを開きます。「表の読み込み(追加)」はファイルの画像をいまの表に足します(ランクか未配置を選べます)。「共有用HTMLの読み込み」は共有用HTMLから表を復元します(表に置き換え・ランクに追加・未配置に追加)。「表の読み込み」「ランクの型を読み込む」「設定を読み込む」「タグの辞書を読み込み」から選びます"],
     ["元に戻す" + (arrows ? "(⬅︎)" : ""), "直前にした操作を取り消します" + (mob ? "" : "。Ctrl+Z でもできます")],
     ["やり直す" + (arrows ? "(➡︎)" : ""), "元に戻した操作をもう一度やり直します" + (mob ? "" : "。Ctrl+Shift+Z や Ctrl+Y でもできます")],
     ["ティア追加", "ランクを1つ増やします"],
@@ -5035,6 +5040,7 @@ function docData(kind) {
       ["ランクに配置済み画像を未配置に移動", "すべてのランクの画像を未配置に戻します"],
       ["設定の保存・読み込み", "「設定を保存」で設定をファイルに保存し「設定を読み込む」で別のブラウザや端末でも同じ設定にできます。表のデータは含まれません"],
       ["画像を削除するときに確認を出す", "OFFにすると画像を削除するときの確認が出なくなります(画像詳細の「削除」・未分類をすべて削除・選択モードの削除など)"],
+      ["重複した画像を削除するときの情報", "重複した画像を削除すると削除した画像のタグ・メモ・点数が残した画像に引き継がれます。残した画像にすでに情報があるときは点数は残した画像のものを使いタグとメモは追加します。「残す画像に情報があってもタグ・メモを追加する」をOFFにすると残した画像に情報があるときは何も足しません"],
       ["検索・絞り込みの設定", "「画像詳細の「前へ」「次へ」を検索・絞り込みの対象だけにする」がONのときは検索や絞り込みで一致した画像の間だけを前後に移ります。「Enterで検索対象の次の画像へ移動する」がONのときは検索と絞り込みの入力欄でEnterを押すと1回目は結果を出し2回目から次の画像へ移ります(Shift+Enterで前の画像へ)"],
       ["画像詳細の設定", "「画像詳細のタグを押して絞り込む」はタグを押すとそのタグで絞り込みます。「画像詳細でスワイプして前後の画像へ移る」はスマホで左右にスワイプして画像を切り替えます"],
       ["説明書", "この説明書を開きます"]]],
@@ -5447,52 +5453,156 @@ dupndlg.addEventListener("click", e => {
   else if (a === "del") {
     const ids = [...dupndlg.querySelectorAll(".dn-ck:checked")].map(c => c.dataset.id);
     if (!ids.length) { say("削除する画像にチェックを入れてください"); return; }
-    deleteIds(ids); renderDupName(dnFind(dnLevel));
+    const apply = planCarry(dupndlg._groups || [], ids);
+    deleteIds(ids);
+    if (ids.every(id => !state.cards[id])) apply();
+    renderDupName(dnFind(dnLevel));
   }
 });
-/* ---------- 表の読み込み(追加) ---------- */
+/* ---------- 重複を削除するときの、タグ・メモ・点数の引き継ぎ ---------- */
+var carryAdd = lget("carryadd", true);
+onChg("#carryAdd", t => { carryAdd = t.checked; lset("carryadd", carryAdd); });
+const hasScores = c => !!(c.sc && Object.values(c.sc).some(o => o && Object.keys(o).length));
+function mergeInfo(t, infos) {   // 残す画像 t に、削除する画像の情報を引き継ぐ(点数は、残す画像にないときだけ)
+  let changed = false;
+  const hadTags = (t.tags || []).length > 0, hadSc = hasScores(t);
+  infos.forEach(i => {
+    if (i.tags.length && (!hadTags || carryAdd)) {
+      const cur = t.tags || [];
+      i.tags.forEach(x => { if (cur.length < 50 && !cur.some(y => y.toLowerCase() === x.toLowerCase())) { cur.push(x); changed = true; } });
+      if (cur.length) t.tags = cur;
+    }
+    if (i.memo) { if (!t.memo) { t.memo = i.memo; changed = true; } else if (carryAdd && !t.memo.includes(i.memo)) { t.memo += "\n" + i.memo; changed = true; } }
+    if (i.sc && !hadSc && !hasScores(t)) { t.sc = i.sc; changed = true; }
+  });
+  return changed;
+}
+function planCarry(groups, delIds) {   // 削除する前に、情報を控えておく
+  const del = new Set(delIds), snap = {};
+  delIds.forEach(id => { const c = state.cards[id]; if (c) snap[id] = { tags: [...(c.tags || [])], memo: c.memo || "", sc: hasScores(c) ? JSON.parse(JSON.stringify(c.sc)) : null }; });
+  return () => {
+    let n = 0;
+    groups.forEach(g => {
+      const dels = g.filter(id => del.has(id)), keep = g.find(id => !del.has(id) && state.cards[id]);
+      if (keep && dels.length && mergeInfo(state.cards[keep], dels.map(id => snap[id]).filter(Boolean))) n++;
+    });
+    if (n) { touch(); render(); say(`残した画像に、削除した画像のタグ・メモ・点数を引き継ぎました(${n}組)`); }
+  };
+}
+/* ---------- 表の読み込み(追加)・共有用HTMLの読み込み ---------- */
 const addmodedlg = $("#addmodedlg");
-let addPending = null;
-$("#loadAddBtn").onclick = () => $("#add-file").click();
-$("#loadAddBtn2").onclick = () => $("#add-file").click();
+let addSrc = null, addOpt = { dest: "pool", over: "pool", tp: "strip" };
+["#loadAddBtn", "#loadAddBtn2"].forEach(q => { $(q).onclick = () => $("#add-file").click(); });
+["#loadHtmlBtn", "#loadHtmlBtn2"].forEach(q => { $(q).onclick = () => $("#html-file").click(); });
+function addPlan() {   // 何枚が、どこに入るか
+  const s = addSrc, n = state.tiers.length, per = state.tiers.map(() => 0), extra = [], cnt = ids => ids.filter(id => s.cards[id]).length;
+  let pool = 0, total = 0;
+  s.tiers.forEach((t, i) => {
+    const k = cnt(t.items); total += k;
+    if (addOpt.dest !== "rank") pool += k;
+    else if (i < n) per[i] += k;
+    else if (addOpt.over === "add") extra[i - n] = (extra[i - n] || 0) + k;
+    else pool += k;
+  });
+  const k2 = cnt(s.pool); total += k2; pool += k2;
+  const listed = new Set([...s.tiers.flatMap(t => t.items), ...s.pool]), lost = Object.keys(s.cards).filter(id => !listed.has(id)).length; total += lost; pool += lost;
+  return { per, extra, pool, total };
+}
+function renderAddDlg() {
+  const s = addSrc, o = addOpt, html = s.kind === "html", p = addPlan();
+  const rd = (name, v, l, cur) => `<label><input type="radio" name="${name}" value="${v}" ${cur === v ? "checked" : ""}> ${l}</label>`;
+  const preview = o.dest === "replace" ? `<div>いまの表を置き換えます(ランク${s.tiers.length}個・画像${p.total}枚)</div>` :
+    `<table class="sc-tb">${state.tiers.map((t, i) => `<tr><td><span class="sc-chip" style="background:${t.color}"></span>${esc(t.name)}</td><td>+${p.per[i]}枚</td></tr>`).join("")}${p.extra.map((k, i) => k ? `<tr><td>新しいランク${i + 1}</td><td>+${k}枚</td></tr>` : "").join("")}<tr><td>未配置</td><td>+${p.pool}枚</td></tr><tr><td><b>合計</b></td><td><b>${p.total}枚</b></td></tr></table>`;
+  addmodedlg.innerHTML = `<button class="vd-x" data-vx aria-label="閉じる">✕</button>
+    <div class="dlg-head"><span></span><h3 class="dlg-title">${html ? "共有用HTMLの読み込み" : "表の読み込み(追加)"}</h3><span></span></div>
+    <p class="cmp-hint" style="text-align:left">「${esc(String(s.title || "無題"))}」の画像${p.total}枚を読み込みます${html ? "(共有用HTMLに入っていた内容だけを復元します)" : ""}</p>
+    <div class="dc-h">読み込み方</div><div class="cmp-opt">${html ? rd("am-dest", "replace", "表に置き換え", o.dest) : ""}${rd("am-dest", "rank", "ランクに追加", o.dest)}${rd("am-dest", "pool", "未配置に追加", o.dest)}</div>
+    ${o.dest === "rank" ? `<p class="cmp-hint" style="text-align:left">読み込む表のランクは、上から順に、いまの表の上から順のランクへ入ります(ランク名は見ません)</p><div class="dc-h">ランクが足りないとき</div><div class="cmp-opt">${rd("am-over", "add", "ランクを追加して入れる", o.over)}${rd("am-over", "pool", "未配置に置く", o.over)}</div>` : ""}
+    ${o.dest !== "replace" ? `<div class="dc-h">タグ・点数</div><div class="cmp-opt">${rd("am-tp", "strip", "タグ・点数を削除して追加", o.tp)}${rd("am-tp", "merge", "タグ・点数も項目を増やして追加", o.tp)}</div><p class="cmp-hint" style="text-align:left">「項目を増やして追加」では、読み込む表にだけある点数項目を、いまの点数項目に足します。メモは、どちらでも残ります</p>` : ""}
+    <div class="dc-h">追加される枚数</div>${preview}
+    <div class="cmp-foot" style="justify-content:flex-end"><button class="primary" id="am-go">${o.dest === "replace" ? "置き換える" : "追加する"}</button><button id="am-close">閉じる</button></div>`;
+}
+function openAddDlg(src, title) { addSrc = src; addOpt = { dest: "pool", over: "pool", tp: "strip" }; renderAddDlg(); addmodedlg.showModal(); addmodedlg.scrollTop = 0; document.activeElement?.blur?.(); }
 $("#add-file").addEventListener("change", async e => {
   const f = e.target.files[0]; e.target.value = ""; if (!f) return;
   try {
     const d = JSON.parse(await f.text());
     if (!Array.isArray(d.tiers) || !d.cards || typeof d.cards !== "object" || !Array.isArray(d.pool)) throw new Error();
-    addPending = d;
-    const n = Object.keys(cleanCards(d.cards)).length;
-    addmodedlg.innerHTML = `<button class="vd-x" data-vx aria-label="閉じる">✕</button>
-      <div class="dlg-head"><span></span><h3 class="dlg-title">表の読み込み(追加)</h3><span></span></div>
-      <p class="cmp-hint" style="text-align:left">「${esc(String(d.title || "無題"))}」の画像${n}枚を、いまの表の未配置に追加します。ランクや大きさなど、表の設定はいまの表のままです</p>
-      <div class="cmp-opt"><label><input type="radio" name="addmode" value="strip" checked> タグ・点数を削除して追加</label><label><input type="radio" name="addmode" value="merge"> タグ・点数も項目を増やして追加</label></div>
-      <p class="cmp-hint" style="text-align:left">「項目を増やして追加」では、読み込む表にだけある点数項目を、いまの点数項目に足します(ジャンルが同じときだけ)。タグは、そのまま画像に付きます</p>
-      <div class="cmp-foot" style="justify-content:flex-end"><button class="primary" id="am-go">追加する</button><button id="am-close">閉じる</button></div>`;
-    addmodedlg.showModal(); document.activeElement?.blur?.();
+    openAddDlg({ kind: "table", title: d.title, tiers: d.tiers.map(t => ({ items: Array.isArray(t.items) ? t.items : [] })), pool: d.pool, cards: cleanCards(d.cards), genre: validGenre(d.genre) });
   } catch (err) { say("このファイルは読み込めませんでした。表のファイルを選んでください"); }
+});
+$("#html-file").addEventListener("change", async e => {   // 共有用HTMLの、データの部分を取り出す
+  const f = e.target.files[0]; e.target.value = ""; if (!f) return;
+  try {
+    const m = /<script type="application\/json" id="d">([\s\S]*?)<\/script>/.exec(await f.text());
+    const D = JSON.parse(m[1]);
+    if (!Array.isArray(D.rows) || !D.cards || typeof D.cards !== "object") throw new Error();
+    const rows = D.rows.slice(), last = rows[rows.length - 1], hasPool = last && last.name === "未配置";   // 書き出すときに、未配置は、最後の行として入る
+    const poolRow = hasPool ? rows.pop() : null, cards = {};
+    for (const id of Object.keys(D.cards)) {
+      const c = D.cards[id]; if (!c || typeof c.s !== "string" || !c.s.startsWith("data:")) continue;
+      cards[id] = { src: c.s, name: String(c.n || "画像").slice(0, 100), ...(Array.isArray(c.t) && c.t.length ? { tags: c.t.map(x => String(x).slice(0, 30)).slice(0, 50) } : {}), ...(c.m ? { memo: String(c.m).slice(0, 1000) } : {}), scList: Array.isArray(c.sc) ? c.sc : [] };
+    }
+    if (!Object.keys(cards).length) throw new Error();
+    openAddDlg({ kind: "html", title: D.title, genreLabel: D.genre, tiers: rows.map(r => ({ name: String(r.name || ""), color: /^#[0-9a-f]{6}$/i.test(r.color) ? r.color : "#888888", border: /^#[0-9a-f]{6}$/i.test(r.border) && r.border.toLowerCase() !== String(r.color).toLowerCase() ? r.border : "", items: Array.isArray(r.ids) ? r.ids : [] })), pool: poolRow && Array.isArray(poolRow.ids) ? poolRow.ids : [], cards });
+  } catch (err) { say("このファイルは読み込めませんでした。「共有用のHTMLを書き出す」で書き出したHTMLを選んでください"); }
+});
+addmodedlg.addEventListener("change", e => {
+  const el = e.target; if (!el.name) return;
+  if (el.name === "am-dest") addOpt.dest = el.value; else if (el.name === "am-over") addOpt.over = el.value; else if (el.name === "am-tp") addOpt.tp = el.value;
+  renderAddDlg();
 });
 addmodedlg.addEventListener("click", e => {
   if (e.target.closest(".vd-x") || e.target.id === "am-close") { addmodedlg.close(); return; }
-  if (e.target.id !== "am-go" || !addPending) return;
-  const d = addPending, mode = addmodedlg.querySelector('input[name="addmode"]:checked').value;
-  const cards = cleanCards(d.cards), order = [...d.tiers.flatMap(t => Array.isArray(t.items) ? t.items : []), ...(Array.isArray(d.pool) ? d.pool : []), ...Object.keys(cards)];
-  const seen = new Set(); let n = 0;
-  for (const oid of order) {
-    if (!cards[oid] || seen.has(oid)) continue; seen.add(oid);
-    const c = cards[oid], nid = uid();
-    if (mode === "strip") { delete c.tags; delete c.sc; }
-    state.cards[nid] = c; state.pool.push(nid); n++;
+  if (e.target.id !== "am-go" || !addSrc) return;
+  const s = addSrc, o = addOpt, replace = o.dest === "replace";
+  if (replace && !confirm("いまの表を置き換えます。よろしいですか?")) return;
+  let type = state.genre.type;
+  const labels = [...new Set(Object.values(s.cards).flatMap(c => (c.scList || []).map(x => x[0])))];
+  if (replace && s.kind === "html") {   // ジャンルと点数項目を、HTMLのものに合わせる
+    const gl = String(s.genreLabel || ""), hit = ["anime", "game"].find(t => GENRES[t].label === gl || (labels.length && labels.every(l => GENRES[t].items.some(x => x[1] === l))));
+    state.genre = hit ? { type: hit, text: "" } : { type: "none", text: gl && gl !== "未設定" ? gl.slice(0, 8) : "", items: { none: labels.length ? labels.slice(0, 20).map((l, i) => ["i" + (i + 1), l]) : GENRE_DEFAULTS.none } };
+    syncGenreItems(); type = state.genre.type;
   }
-  let extra = 0;
-  if (mode === "merge") {
-    const dg = validGenre(d.genre);
-    if (dg && dg.type === state.genre.type) {
-      const cur = GENRES[state.genre.type].items, inc = (dg.items && dg.items[dg.type]) || GENRE_DEFAULTS[dg.type], add = inc.filter(([k]) => !cur.some(x => x[0] === k));
-      if (add.length) { setItems([...cur, ...add].slice(0, 20)); extra = add.length; }
+  const items = GENRES[type].items, addItems = [];
+  const keyFor = l => { let it = items.find(x => x[1] === l) || addItems.find(x => x[1] === l); if (!it) { it = ["x" + Math.random().toString(36).slice(2, 8), l]; addItems.push(it); } return it[0]; };
+  const keep = replace || o.tp === "merge";
+  const make = oid => {
+    const sc0 = s.cards[oid], c = { src: sc0.src, name: sc0.name };
+    if (sc0.memo) c.memo = sc0.memo;
+    if (keep) {
+      if (sc0.tags && sc0.tags.length) c.tags = [...sc0.tags];
+      if (s.kind === "html") { const sc = {}; (sc0.scList || []).forEach(([l, v]) => { if (v !== null && v !== undefined && isFinite(+v)) sc[keyFor(l)] = Math.max(-999, Math.min(999, Math.round(+v))); }); if (Object.keys(sc).length) c.sc = { [type]: sc }; }
+      else if (sc0.sc) c.sc = sc0.sc;
     }
+    return c;
+  };
+  const order = [...s.tiers.flatMap(t => t.items), ...s.pool, ...Object.keys(s.cards)], seen = new Set(), place = [];   // [新しいID, 入れるランクの番号(-1は未配置)]
+  const ids = {};
+  const newId = oid => ids[oid] || (ids[oid] = uid());
+  let n = 0;
+  if (replace) {
+    state.title = String(s.title || "無題").slice(0, 60); state.cards = {}; state.pool = [];
+    state.tiers = s.tiers.length ? s.tiers.map(t => ({ id: uid(), name: t.name.slice(0, 40), color: t.color, border: t.border || "", items: [] })) : state.tiers.map(t => ({ ...t, items: [] }));
+    $("#title").value = state.title;
+    try { cmp = null; qc = null; updateCompareBtn(); } catch (err) {}
+  } else if (o.dest === "rank") {   // ランクが足りないとき、ランクを追加するなら、先に作る
+    const need = o.over === "add" ? s.tiers.reduce((mx, t, i) => (t.items.some(id => s.cards[id]) ? i + 1 : mx), 0) : 0;
+    while (state.tiers.length < need) state.tiers.push({ id: uid(), name: nextTierName(state.tiers), color: nextTierColor(state.tiers), items: [] });
   }
-  addPending = null; addmodedlg.close(); touch(); render();
-  say(`「${d.title || "無題"}」の画像${n}枚を未配置に追加しました` + (extra ? `(点数項目を${extra}個増やしました)` : ""));
+  const put = (oid, ti) => {
+    if (!s.cards[oid] || seen.has(oid)) return; seen.add(oid);
+    const id = newId(oid); state.cards[id] = make(oid); n++;
+    if (ti >= 0 && ti < state.tiers.length) state.tiers[ti].items.push(id); else state.pool.push(id);
+  };
+  s.tiers.forEach((t, i) => t.items.forEach(oid => put(oid, replace ? i : o.dest === "rank" ? i : -1)));
+  s.pool.forEach(oid => put(oid, -1)); Object.keys(s.cards).forEach(oid => put(oid, -1));
+  if (!replace && o.tp === "merge") {
+    if (s.kind === "html" && addItems.length) setItems([...items, ...addItems].slice(0, 20));
+    else if (s.kind === "table" && s.genre && s.genre.type === type) { const inc = (s.genre.items && s.genre.items[type]) || GENRE_DEFAULTS[type], add = inc.filter(([k]) => !items.some(x => x[0] === k)); if (add.length) setItems([...items, ...add].slice(0, 20)); }
+  } else if (replace && addItems.length) setItems([...items, ...addItems].slice(0, 20));
+  addSrc = null; addmodedlg.close(); touch(); applyLayout(); render();
+  say(replace ? `共有用HTMLから、表を復元しました(画像${n}枚)` : `「${s.title || "無題"}」の画像${n}枚を${o.dest === "rank" ? "ランクに" : "未配置に"}追加しました`);
 });
 window.addEventListener("beforeunload", e => {
   if (dirty && Object.keys(state.cards).length) { e.preventDefault(); e.returnValue = ""; }
